@@ -9,6 +9,7 @@
 * Comments: It Begins
 *****************************************************************************"""
 
+
 class player:
 
     def __init__(self, colour):
@@ -24,6 +25,7 @@ class player:
         player for this game).
         """
 
+        self.colour = colour
         self.board = []
 
       	for i in range(8):
@@ -78,5 +80,9 @@ class player:
         Your player will not be notified about its own actions.
         """
 
-        self.board[action[1], action[0]]
+        if self.colour = "black"
+        	self.board[action[1], action[0]] = "O"
+
+        else:
+        	self.board[action[1], action[0]] = "@"
 
