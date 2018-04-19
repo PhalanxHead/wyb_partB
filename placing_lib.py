@@ -18,8 +18,8 @@ def placing_phase(self, turns):
 
 
 def check_if_take(self):
-	""" 
-	Function to check if there are any opponent's pieces that we could 
+	"""
+	Function to check if there are any opponent's pieces that we could
 	possible take out using the placing phase. We look for pieces that have an
 	opponents piece next to them. Whether the move is valid or not then come in
 	later. Returns a list of potential moves that would kill the opponent piece.
@@ -34,7 +34,7 @@ def check_if_take(self):
 		for i, move in enumerate(buffers, 0):
 
 			if (piece[0] + move[0], piece[1] + move[1]) in self.piece_locations:
-				
+
 				if move == (1,0):
 					new_placement = (piece[0] - 1, piece[1])
 				elif move == (-1,0):
@@ -47,7 +47,3 @@ def check_if_take(self):
 				potential_move.append(new_placement)
 
 	return potential_move
-
-
-
-
