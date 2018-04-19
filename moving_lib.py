@@ -13,4 +13,4 @@ def moving_phase(self, turns):
 
 
 
-	return new_pos, old_pos
+	return (new_pos, old_pos)
