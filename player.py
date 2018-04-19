@@ -11,7 +11,6 @@
 
 class player:
 
-
     def __init__(self, colour):
         # Stuff
         """
@@ -78,4 +77,6 @@ class player:
         Note: update() is only called to notify your player about the opponent’s actions.
         Your player will not be notified about its own actions.
         """
+
+        self.board[action[1], action[0]]
 
