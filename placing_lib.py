@@ -13,6 +13,12 @@ def placing_phase(self, turns):
 
 	potential_killers = check_if_take(self)
 
+	if potential_killers:
+		""" check the validity? """
+
+	else:
+		""" we need to do some other sort of move """
+
 
 	return move
 
