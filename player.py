@@ -28,6 +28,8 @@ class player:
 
         self.colour = colour
         self.board = []
+        self.piece_locations = []
+        self.opponent_locations = []
 
       	for i in range(8):
       		if (i == 0) or (i == 7):
@@ -86,4 +88,6 @@ class player:
 
         else:
         	self.board[action[1], action[0]] = "@"
+
+        self.opponent_locations.append(action)
 
