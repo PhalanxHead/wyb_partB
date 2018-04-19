@@ -10,6 +10,8 @@
 *****************************************************************************"""
 
 class player:
+
+
     def __init__(self, colour):
         # Stuff
         """
@@ -22,6 +24,17 @@ class player:
         you are the White player for this game) or the string 'black' (if you are the Black
         player for this game).
         """
+
+        self.board = []
+
+      	for i in range(8):
+      		if (i == 0) or (i == 7):
+      			self.board.append(['X','','','','','','','X'])
+
+      		else:
+      			self.board.append(['','','','','','','',''])
+
+
     def action(self, turns):
         # Stuff
         """
@@ -48,6 +61,12 @@ class player:
                 • To represent a forfeited turn, use the value None.
         """
 
+        if turns >= 24:
+        	moving_phase(self, turns)
+
+        else:
+        	placing_phase(self, turns)
+
     def update(self, action):
         # Stuff
         """
@@ -59,4 +78,4 @@ class player:
         Note: update() is only called to notify your player about the opponent’s actions.
         Your player will not be notified about its own actions.
         """
->>>>>>> f3802657633691bf6f8fa44a2ec7d937d89991b7
+
