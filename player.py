@@ -36,6 +36,7 @@ class player:
       		else:
       			self.board.append(['','','','','','','',''])
 
+    #**************************************************************************
 
     def action(self, turns):
         # Stuff
@@ -69,6 +70,9 @@ class player:
         else:
         	return placing_phase(self, turns)
 
+
+    #***************************************************************************
+
     def update(self, action):
         # Stuff
         """
@@ -87,6 +91,8 @@ class player:
         else:
         	self.board[action[1], action[0]] = "@"
 
+
+""" ************************************************************************* """
 
 def check_legal(board, toPos, turnNum):
     """
@@ -149,12 +155,130 @@ def check_legal(board, toPos, turnNum):
 
 
         # Check the piece isn't moving into an illegal piece
+        # TODO: Check Jump as well
     if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O':
         return False
 
         # Check the piece won't die
-    if check_die(board, toPos) == True:
+    if check_self_die(board, toPos) == True:
         return False
 
         # Thus the move is legal
     return True
+
+
+""" ************************************************************************* """
+
+def check_self_die(state, new_pos):
+    """
+    *** Lifted from Part A Solution
+
+    Check if a potential white move will kill the white piece (to stop the move occurring)
+    Returns:        True if white could be killed.
+    ________________________
+    Input Variables:
+        state:      The Board Array as defined above
+        new_pos:    The position white is trying to move to.
+    """
+    piece_i = new_pos[0]
+    piece_j = new_pos[1]
+
+    if piece_i == 0 or piece_i == 7:
+        if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
+        or (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "X") \
+        or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == "@"):
+
+            """ Only need to check left and right of the piece"""
+
+            if (piece_j - 2 < 0):
+                pass
+            else:
+                piece_check = state[piece_i][piece_j - 2]
+
+                if piece_check == "O":
+                    return False
+
+            try:
+                piece_check = state[piece_i][piece_j + 2]
+
+            except IndexError:
+                piece_check = False
+
+            if (piece_check == "O"):
+                return False
+
+            return True
+
+    elif piece_j == 0 or piece_j == 7:
+        if (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@") \
+        or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == "@") \
+        or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "X"):
+
+            """ Only need to check above and below of the piece"""
+
+            if (piece_i - 2 < 0):
+                pass
+            else:
+                piece_check = state[piece_i - 2][piece_j]
+
+                if piece_check == "O":
+                    return False
+
+            try:
+                piece_check = state[piece_i + 2][piece_j]
+
+            except IndexError:
+                piece_check = False
+
+            if (piece_check == "O"):
+                return False
+
+            return True
+
+    else:
+
+
+        if (state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@") \
+        or (state[piece_i + 1][piece_j] == "@") and (state[piece_i - 1][piece_j] == "@"):
+
+            """ Check left and right """
+
+            if (piece_i - 2 < 0):
+                pass
+            else:
+                piece_check = state[piece_i - 2][piece_j]
+
+                if piece_check == "O":
+                    return False
+
+            try:
+                piece_check = state[piece_i + 2][piece_j]
+            except IndexError:
+                piece_check = False
+
+            if (piece_check == "O"):
+                return False
+
+            """ Check above and below"""
+
+            if (piece_j - 2 < 0):
+                pass
+            else:
+                piece_check = state[piece_i][piece_j - 2]
+
+                if piece_check == "O":
+                    return False
+
+            try:
+                piece_check = state[piece_i][piece_j + 2]
+            except IndexError:
+                piece_check = False
+
+            if (piece_check == "O"):
+                return False
+
+            return True
+
+    return False
+
+""" ************************************************************************* """
