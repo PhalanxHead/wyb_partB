@@ -14,4 +14,4 @@ def placing_phase(self, turns):
 
 	return move
 
-
+	

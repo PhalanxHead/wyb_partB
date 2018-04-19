@@ -87,3 +87,74 @@ class player:
         else:
         	self.board[action[1], action[0]] = "@"
 
+
+def check_legal(board, toPos, turnNum):
+    """
+    Checks if the proposed move is legal
+    Returns:
+        True:   if move is legal
+        False:  if move is illegal
+    ===========================================================================
+    Input Variables:
+        board:  Board as defined in player class
+        toPos:  (row, col)
+    """
+
+    # Number defs
+    ROW_IDX = 0
+    COL_IDX = 1
+    PLACING = 24
+    MAX_ROW = 5
+    MAX_RC = 7
+    MIN_RC = 0
+    SHRINK1 = 128
+    BRD_BOUND_LOW1 = 1
+    BRD_BOUND_HIGH1 = 6
+    SHRINK2 = 192
+    BRD_BOUND_LOW2 = 2
+    BRD_BOUND_HIGH2 = 5
+
+    # Placing Phase Checks
+    if turnNum < PLACING:
+        # Bounds Check
+        #Check Row
+        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_RC):
+            return False
+
+            # Check Col
+        if (toPos[COL_IDX] > MAX_RC or toPos[COL_IDX] < MIN_RC):
+            return False
+
+            # Checks on Smallest Board Size
+    elif turnNum > SHRINK2:
+        # Bounds Check
+        # Check Row
+        if (toPos[ROW_IDX] > BRD_BOUND_HIGH2 or toPos[ROW_IDX] < BRD_BOUND_LOW2):
+            return False
+
+            # Check Col
+        if (toPos[COL_IDX] > BRD_BOUND_HIGH2 or toPos[COL_IDX] < BRD_BOUND_LOW2):
+            return False
+
+            # Check on first shrink size
+    elif turnNum > SHRINK1:
+        # Bounds Check
+        # Check Row
+        if (toPos[ROW_IDX] > BRD_BOUND_HIGH1 or toPos[ROW_IDX] < BRD_BOUND_LOW1):
+            return False
+
+            # Check Col
+        if (toPos[COL_IDX] > BRD_BOUND_HIGH1 or toPos[COL_IDX] < BRD_BOUND_LOW1):
+            return False
+
+
+        # Check the piece isn't moving into an illegal piece
+    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O':
+        return False
+
+        # Check the piece won't die
+    if check_die(board, toPos) == True:
+        return False
+
+        # Thus the move is legal
+    return True
