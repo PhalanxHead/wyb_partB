@@ -8,7 +8,8 @@
 *
 * Comments: It Begins
 *****************************************************************************"""
-
+from placing_lib import *
+from moving_lib import *
 
 class player:
 
