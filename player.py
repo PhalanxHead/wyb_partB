@@ -64,10 +64,10 @@ class player:
         """
 
         if turns >= 24:
-        	moving_phase(self, turns)
+        	return moving_phase(self, turns)
 
         else:
-        	placing_phase(self, turns)
+        	return placing_phase(self, turns)
 
     def update(self, action):
         # Stuff
