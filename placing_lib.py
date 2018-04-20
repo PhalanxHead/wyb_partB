@@ -11,14 +11,28 @@
 from player import *
 
 TURN_BUFFER = 5
+BLACK_STARTING_MOVES = []
+WHITE_STARTING_MOVES = []
 
 def placing_phase(self, turns):
 	"""
-	Function that determines the 
+	Function that determines what the agent should play in the placing phase of the game.
 	"""
 
 	if turns < TURN_BUFFER:
 		""" Choose some initial best moves, here we need to develop a profile of good moves """
+
+		if self.colour = "black":
+			legal_starting = [starting for starting in BLACK_STARTING_MOVES if check_legal(self.board, starting, turns)]
+
+		else:
+			legal_starting = [starting for starting in WHITE_STARTING_MOVES if check_legal(self.board, starting, turns)]
+
+		if legal_starting:
+			move = legal_starting[0]
+
+		else:
+			""" we need to do some other sort of move, some plan? """
 
 	else:
 		""" Maybe be possible to kill the opponent pieces so we want to make a list
@@ -31,7 +45,7 @@ def placing_phase(self, turns):
 			move = potential_killers[0]
 
 		else:
-			""" we need to do some other sort of move go back to a plan?"""
+			""" we need to do some other sort of move, some plan"""
 
 	return move
 
