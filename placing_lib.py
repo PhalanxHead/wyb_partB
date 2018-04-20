@@ -20,17 +20,15 @@ def placing_phase(self, turns):
 	if turns < TURN_BUFFER:
 		""" Choose some initial best moves, here we need to develop a profile of good moves """
 
-
 	else:
+		""" Maybe be possible to kill the opponent pieces so we want to make a list
+			of all these pieces, at the moment if there are multiple pieces, we will take the first """
 
-		potential_killers = check_if_take(self)
+		potential_killers = check_if_take(self, turns)
 
 		if potential_killers:
 
-			potential_moves = [move for move in potential_killers if check_legal(self.board, move, turns)]
-			
-			""" then pick one of these moves, we will just take the first one for now"""
-			move = potential_moves[0]
+			move = potential_killers[0]
 
 		else:
 			""" we need to do some other sort of move go back to a plan?"""
@@ -38,14 +36,11 @@ def placing_phase(self, turns):
 	return move
 
 
-def check_if_take(self):
+def check_if_take(self, turns):
 	""" 
 	Function to check if there are any opponent's pieces that we could 
 	possible take out using the placing phase. We look for pieces that have an
-	opponents piece next to them. Whether the move is valid or not then come in
-	later. Returns a list of potential moves that would kill the opponent piece.
-	"""
-
+	opponents piece next to them, then add these moves if they are valid."""
 	potential_move = []
 
 	buffers = [(1,0), (-1,0), (0,1), (0,-1)]
@@ -65,7 +60,9 @@ def check_if_take(self):
 				else:
 					new_placement = (piece[0], piece[1] + 1)
 
-				potential_move.append(new_placement)
+
+				if check_legal(self.board, new_placement, turns):
+					potential_move.append(new_placement)
 
 	return potential_move
 
