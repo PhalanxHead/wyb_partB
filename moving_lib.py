@@ -8,7 +8,9 @@
 *
 * Comments: It Begins
 *****************************************************************************"""
-""" For moving """
+""" For moving 
+- we want to first use minimax + alpha-beta pruning
+- """
 def moving_phase(self, turns):
 
 
