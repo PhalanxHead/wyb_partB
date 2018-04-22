@@ -63,6 +63,8 @@ def check_if_take(self, turns):
 
 		for i, move in enumerate(buffers, 0):
 
+			#add corner solutions
+
 			if (piece[0] + move[0], piece[1] + move[1]) in self.piece_locations:
 				
 				if move == (1,0):

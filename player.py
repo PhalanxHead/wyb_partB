@@ -286,3 +286,22 @@ def check_self_die(state, new_pos):
     return False
 
 """ ************************************************************************* """
+
+def check_move_kill(board, opponent_pieces, colour):
+	buffers = [(1,0), (-1,0), (1)]
+
+	if colour = "black":
+		sym = "@"
+	else:
+		sym = "O"
+
+	for piece in opponent_pieces:
+
+		if piece[0] == 0 or piece[0] == 7:
+
+			if board[piece[0] - 1][piece[1]] == "X" and board[piece[0] + 1][piece[0] + 1][piece]
+
+		elif piece[1] == 0 or piece[1] == 7:
+
+		else:
+
