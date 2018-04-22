@@ -87,7 +87,7 @@ class player:
         Your player will not be notified about its own actions.
         """
 
-        if self.colour = "black"
+        if self.colour = "black":
         	self.board[action[1], action[0]] = "O"
 
         else:
