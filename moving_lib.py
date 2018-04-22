@@ -32,9 +32,9 @@ class Board_State(board, colour, old_pos, new_pos):
 - """
 def moving_phase(self, turns):
 
+    move_set = minimax(self, turns)
 
-
-    return (old_pos, new_pos)
+    return move_set
 
 def get_available_moves(board, piece_locations, turns):
   """ 
