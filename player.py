@@ -287,21 +287,58 @@ def check_self_die(state, new_pos):
 
 """ ************************************************************************* """
 
-def check_move_kill(board, opponent_pieces, colour):
-	buffers = [(1,0), (-1,0), (1)]
+def check_move_kill(board, new_pos, colour):
+	"""
+	Alright, let's do some kill confirmed kind of shit now
+	"""
+	buffers = [(1,0), (-1,0), (0,1),(0,-1)]
+	kill_count = 0
 
 	if colour = "black":
 		sym = "@"
+		ene = "O"
 	else:
 		sym = "O"
+		ene = "@"
 
-	for piece in opponent_pieces:
+	if new_pos[0] == 0 or new_pos[0] == 1:
+		""" We only want to check the points around us"""
+	
+	elif new_pos[0] == 6 or new_pos[0] == 7:
+		""" Again only consider points aroun us """
 
-		if piece[0] == 0 or piece[0] == 7:
+	if new_pos[1] == 0 or new_pos[1] == 1:
+		"""  s"""
+	elif new_pos[1] == 6 or new_pos[1] == 7:
+		""" w"""
 
-			if board[piece[0] - 1][piece[1]] == "X" and board[piece[0] + 1][piece[0] + 1][piece]
+	else:
+		""" Check all 4 areas, no corner solutions are here"""
 
-		elif piece[1] == 0 or piece[1] == 7:
+		if board[new_pos[0]+1][new_pos[1]] == ene:
+			if board[new_pos[0]+2][new_pos[1]] == sym:
 
-		else:
+				kill_count += 1
+
+		if board[new_pos[0]-1][new_pos[1]] == ene:
+			if board[new_pos[0]-2][new_pos[0]] == sym:
+
+				kill_count +=1
+
+		if board[new_pos[0]][new_pos[1]+1] == ene:
+			if board[new_pos[0]][new_pos[1]+2] == sym:
+
+				kill_count += 1
+
+		if board[new_pos[0]][new_pos[1]-2] == ene:
+			if board[new_pos[0]][new_pos[1]-2] == sym:
+
+				kill_count += 1
+
+	return kill_count
+
+
+
+
+
 

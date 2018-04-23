@@ -96,6 +96,7 @@ def minimax(self, turns):
      - Kill is worth 5
      - Getting killed is worth 0
      - Neutral move is worth 2
+     current scoring system is fucking shIT
      """
 
     if check_self_die(new_state, move[1]):
