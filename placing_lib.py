@@ -32,7 +32,8 @@ def placing_phase(self, turns):
 			move = legal_starting[0]
 
 		else:
-			""" we need to do some other sort of move, some plan? """
+			""" Make a random legal move (Just for now) """
+			move = random_place()
 
 	else:
 		""" Maybe be possible to kill the opponent pieces so we want to make a list
@@ -45,14 +46,16 @@ def placing_phase(self, turns):
 			move = potential_killers[0]
 
 		else:
-			""" we need to do some other sort of move, some plan"""
+			""" Also making a random move for now. I think controlling the centre
+				Will give an advantage though """
+				move = random_place()
 
 	return move
 
 
 def check_if_take(self, turns):
-	""" 
-	Function to check if there are any opponent's pieces that we could 
+	"""
+	Function to check if there are any opponent's pieces that we could
 	possible take out using the placing phase. We look for pieces that have an
 	opponents piece next to them, then add these moves if they are valid."""
 	potential_move = []
@@ -66,7 +69,7 @@ def check_if_take(self, turns):
 			#add corner solutions
 
 			if (piece[0] + move[0], piece[1] + move[1]) in self.piece_locations:
-				
+
 				if move == (1,0):
 					new_placement = (piece[0] - 1, piece[1])
 				elif move == (-1,0):
@@ -82,6 +85,8 @@ def check_if_take(self, turns):
 
 	return potential_move
 
+def random_place():
+	col = random.randint(0,7)
+	row = random.randint(0,5)
 
-
-
+	return (row, col)
