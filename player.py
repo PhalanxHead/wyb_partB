@@ -303,6 +303,18 @@ def check_move_kill(board, new_pos, colour):
 
 	if new_pos[0] == 0 or new_pos[0] == 1:
 		""" We only want to check the points around us"""
+
+		if new_pos[1] == 0 or new_pos[1] == 1:
+
+			if board[new_pos[0]+1][new_pos[1]] == ene:
+				if board[new_pos[0]+2][new_pos[1]] == sym:
+
+					kill_count += 1
+
+			if board[new_pos[0]][new_pos[1]+1] == ene:
+				if board[new_pos[0]][new_pos[1]+2] == sym:
+
+					kill_count += 1
 	
 	elif new_pos[0] == 6 or new_pos[0] == 7:
 		""" Again only consider points aroun us """
@@ -311,6 +323,7 @@ def check_move_kill(board, new_pos, colour):
 		"""  s"""
 	elif new_pos[1] == 6 or new_pos[1] == 7:
 		""" w"""
+
 
 	else:
 		""" Check all 4 areas, no corner solutions are here"""
