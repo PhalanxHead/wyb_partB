@@ -301,52 +301,26 @@ def check_move_kill(board, new_pos, colour):
 		sym = "O"
 		ene = "@"
 
-	if new_pos[0] == 0 or new_pos[0] == 1:
-		""" We only want to check the points around us"""
+	for move in bufferss:
 
-		if new_pos[1] == 0 or new_pos[1] == 1:
+		pos_x = new_pos[0] + move[0]
+		pos_y = new_pos[1] + move[1]
 
-			if board[new_pos[0]+1][new_pos[1]] == ene:
-				if board[new_pos[0]+2][new_pos[1]] == sym:
+		pos_2x = new_pos[0] + 2*move[0]
+		pos_2y = new_pos[1] + 2*move[1]
 
+
+		if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
+
+			try:
+				piece_e = board[pos_x][pos_y]
+				piece_s = board[pos_2x][pos_2y]
+
+				if piece_e == ene and (piece_s == symb or piece_s == "X"):
 					kill_count += 1
 
-			if board[new_pos[0]][new_pos[1]+1] == ene:
-				if board[new_pos[0]][new_pos[1]+2] == sym:
-
-					kill_count += 1
-	
-	elif new_pos[0] == 6 or new_pos[0] == 7:
-		""" Again only consider points aroun us """
-
-	if new_pos[1] == 0 or new_pos[1] == 1:
-		"""  s"""
-	elif new_pos[1] == 6 or new_pos[1] == 7:
-		""" w"""
-
-
-	else:
-		""" Check all 4 areas, no corner solutions are here"""
-
-		if board[new_pos[0]+1][new_pos[1]] == ene:
-			if board[new_pos[0]+2][new_pos[1]] == sym:
-
-				kill_count += 1
-
-		if board[new_pos[0]-1][new_pos[1]] == ene:
-			if board[new_pos[0]-2][new_pos[0]] == sym:
-
-				kill_count +=1
-
-		if board[new_pos[0]][new_pos[1]+1] == ene:
-			if board[new_pos[0]][new_pos[1]+2] == sym:
-
-				kill_count += 1
-
-		if board[new_pos[0]][new_pos[1]-2] == ene:
-			if board[new_pos[0]][new_pos[1]-2] == sym:
-
-				kill_count += 1
+			except (IndexError, ValueError):
+				pass
 
 	return kill_count
 
