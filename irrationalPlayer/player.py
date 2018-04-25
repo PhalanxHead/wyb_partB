@@ -11,7 +11,7 @@
 from placing_lib import *
 from moving_lib import *
 
-class player:
+class Player:
 
     def __init__(self, colour):
         # Stuff

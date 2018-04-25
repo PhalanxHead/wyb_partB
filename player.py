@@ -31,12 +31,12 @@ class player:
         self.piece_locations = []
         self.opponent_locations = []
 
-      	for i in range(8):
-      		if (i == 0) or (i == 7):
-      			self.board.append(['X','','','','','','','X'])
+        for i in range(8):
+            if (i == 0) or (i == 7):
+                self.board.append(['X','','','','','','','X'])
 
-      		else:
-      			self.board.append(['','','','','','','',''])
+            else:
+                self.board.append(['','','','','','','',''])
 
     #**************************************************************************
 
@@ -67,10 +67,10 @@ class player:
         """
 
         if turns >= 24:
-        	return moving_phase(self, turns)
+            return moving_phase(self, turns)
 
         else:
-        	return placing_phase(self, turns)
+            return placing_phase(self, turns)
 
 
     #***************************************************************************
@@ -87,11 +87,11 @@ class player:
         Your player will not be notified about its own actions.
         """
 
-        if self.colour = "black":
-        	self.board[action[1], action[0]] = "O"
+        if self.colour == "black":
+            self.board[action[1], action[0]] = "O"
 
         else:
-        	self.board[action[1], action[0]] = "@"
+            self.board[action[1], action[0]] = "@"
 
         self.opponent_locations.append(action)
 
@@ -160,7 +160,7 @@ def check_legal(board, toPos, turnNum):
 
         # Check the piece isn't moving into an illegal piece
         # TODO: Check Jump as well
-    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O':
+    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O'):
         return False
 
         # Check the piece won't die
@@ -288,44 +288,38 @@ def check_self_die(state, new_pos):
 """ ************************************************************************* """
 
 def check_move_kill(board, new_pos, colour):
-	"""
-	Alright, let's do some kill confirmed kind of shit now
-	"""
-	buffers = [(1,0), (-1,0), (0,1),(0,-1)]
-	kill_count = 0
+    """
+    Alright, let's do some kill confirmed kind of shit now
+    """
+    buffers = [(1,0), (-1,0), (0,1),(0,-1)]
+    kill_count = 0
 
-	if colour = "black":
-		sym = "@"
-		ene = "O"
-	else:
-		sym = "O"
-		ene = "@"
+    if colour == "black":
+        sym = "@"
+        ene = "O"
+    else:
+        sym = "O"
+        ene = "@"
 
-	for move in bufferss:
+    for move in bufferss:
 
-		pos_x = new_pos[0] + move[0]
-		pos_y = new_pos[1] + move[1]
+        pos_x = new_pos[0] + move[0]
+        pos_y = new_pos[1] + move[1]
 
-		pos_2x = new_pos[0] + 2*move[0]
-		pos_2y = new_pos[1] + 2*move[1]
-
-
-		if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
-
-			try:
-				piece_e = board[pos_x][pos_y]
-				piece_s = board[pos_2x][pos_2y]
-
-				if piece_e == ene and (piece_s == symb or piece_s == "X"):
-					kill_count += 1
-
-			except (IndexError, ValueError):
-				pass
-
-	return kill_count
+        pos_2x = new_pos[0] + 2*move[0]
+        pos_2y = new_pos[1] + 2*move[1]
 
 
+    if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
 
+        try:
+            piece_e = board[pos_x][pos_y]
+            piece_s = board[pos_2x][pos_2y]
 
+            if ((piece_e == ene) and (piece_s == symb or piece_s == "X")):
+                kill_count += 1
 
+        except (IndexError, ValueError):
+            pass
 
+    return kill_count
