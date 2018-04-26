@@ -6,10 +6,13 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 import IRplayer
 import random
+
+ROW = 0
+COL = 1
 
 def placing_phase(self, turns):
     """
@@ -21,7 +24,7 @@ def placing_phase(self, turns):
     while IRplayer.check_legal(self, move, turns) == False:
         move = random_place()
 
-    return (move[1], move[0])
+    return (move[COL], move[ROW])
 
 
 def random_place():

@@ -6,10 +6,13 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 import IRplayer
 import IRplacing_lib
+
+ROW = 0
+COL = 1
 
 class Board_State:
     """
@@ -49,7 +52,7 @@ def get_available_moves(board, piece_locations, turns):
 
         for move in buffers:
 
-            new_pos = (old_pos[0] + move[0], old_pos[1] + move[1])
+            new_pos = (old_pos[ROW] + move[ROW], old_pos[COL] + move[COL])
 
             if check_legal(self.board, new_pos, turns):
                 all_moves.append((old_pos, new_pos))

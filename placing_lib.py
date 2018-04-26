@@ -6,9 +6,12 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 from player import *
+
+ROW = 0
+COL = 1
 
 TURN_BUFFER = 5
 BLACK_STARTING_MOVES = []
@@ -68,22 +71,24 @@ def check_if_take(self, turns):
 
             #add corner solutions
 
-            if (piece[0] + move[0], piece[1] + move[1]) in self.piece_locations:
+            if (piece[ROW] + move[ROW], piece[COL] + move[COL]) in self.piece_locations:
 
                 if move == (1,0):
-                    new_placement = (piece[0] - 1, piece[1])
+                    new_placement = (piece[ROW] - 1, piece[COL])
                 elif move == (-1,0):
-                    new_placement = (piece[0] + 1, piece[1])
+                    new_placement = (piece[ROW] + 1, piece[COL])
                 elif move == (0,1):
-                    new_placement = (piece[0], piece[1] - 1)
+                    new_placement = (piece[ROW], piece[COL] - 1)
                 else:
-                    new_placement = (piece[0], piece[1] + 1)
+                    new_placement = (piece[ROW], piece[COL] + 1)
 
 
                 if check_legal(self.board, new_placement, turns):
                     potential_move.append(new_placement)
 
     return potential_move
+
+"""**************************************************************************"""
 
 def random_place():
     col = random.randint(0,7)

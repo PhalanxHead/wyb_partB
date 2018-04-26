@@ -6,10 +6,13 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 from player import *
 from placing_lib import *
+
+ROW = 0
+COL = 1
 
 class Board_State(board, colour, old_pos, new_pos):
   """
@@ -48,7 +51,7 @@ def get_available_moves(board, piece_locations, turns):
 
     for move in buffers:
 
-      new_pos = (old_pos[0] + move[0], old_pos[1] + move[1])
+      new_pos = (old_pos[ROW] + move[ROW], old_pos[COL] + move[COL])
 
       if check_legal(self.board, new_pos, turns):
         all_moves.append((old_pos, new_pos))
@@ -77,19 +80,19 @@ def minimax(self, turns):
         dead = False
 
         new_board = self.board
-        new_board[move[0][0]][move[0][1]] = ""
+        new_board[move[ROW][ROW]][move[ROW][COL]] = ""
 
         if self.colour == "black":
-            new_board[move[1][0]][move[0][1]] = "@"
+            new_board[move[COL][ROW]][move[ROW][COL]] = "@"
         else:
-            new_board[move[1][0]][move[1][1]] = "O"
+            new_board[move[COL][ROW]][move[COL][COL]] = "O"
 
-        new_state = Board_State(new_board, self.colour, move[0], move[1])
+        new_state = Board_State(new_board, self.colour, move[ROW], move[COL])
         new_state.opponent_pieces = self.opponent_pieces
         new_state.piece_locations = self.piece_locations
 
-        new_state.piece_locations.remove(move[0])
-        new_state.piece_locations.append(move[1])
+        new_state.piece_locations.remove(move[ROW])
+        new_state.piece_locations.append(move[COL])
 
         """ We need to now somehow determine the scores of each of the moves here,
         Firstly let's try define some basic score shit lol:
@@ -99,11 +102,11 @@ def minimax(self, turns):
         current scoring system is fucking shIT
         """
 
-        if check_self_die(new_state, move[1]):
+        if check_self_die(new_state, move[COL]):
             dead = True
             score = 0
 
-        if check_move_kill(new_state, move[1]):
+        if check_move_kill(new_state, move[COL]):
             score = 5
 
         elif not dead:
@@ -136,19 +139,19 @@ def min_play(state, colour):
         dead = False
 
     new_board = starting_state
-    new_board[move[0][0]][move[0][1]] = ""
+    new_board[move[ROW][ROW]][move[ROW][COL]] = ""
 
     if colour == "black":
-        new_board[move[1][0]][move[0][1]] = "O"
+        new_board[move[COL][ROW]][move[ROW][COL]] = "O"
     else:
-        new_board[move[1][0]][move[1][1]] = "@"
+        new_board[move[COL][ROW]][move[COL][COL]] = "@"
 
-    new_state = Board_State(new_board, colour, move[0], move[1])
+    new_state = Board_State(new_board, colour, move[ROW], move[COL])
     new_state.opponent_pieces = state.piece_locations
     new_state.piece_locations = state.opponent_pieces
 
-    new_state.piece_locations.remove(move[0])
-    new_state.piece_locations.append(move[1])
+    new_state.piece_locations.remove(move[ROW])
+    new_state.piece_locations.append(move[COL])
 
     """ Scores are reversed as in terms of our player but this is the enemy player's
     fucntion
@@ -157,11 +160,11 @@ def min_play(state, colour):
         - Neutral move is worth 2
     """
 
-    if check_self_die(new_state, move[1]):
+    if check_self_die(new_state, move[COL]):
         dead = True
         score = 5
 
-    if check_move_kill(new_state, move[1]):
+    if check_move_kill(new_state, move[COL]):
         score = 5
 
     elif not dead:
@@ -180,7 +183,7 @@ def min_play(state, colour):
 # From http://giocc.com/concise-implementation-of-minimax-through-higher-order-functions.html
 def minimax(game_state):
     moves = game_state.get_available_moves()
-    best_move = moves[0]
+    best_move = moves[ROW]
     best_score = float('-inf')
 
     for move in moves:

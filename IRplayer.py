@@ -11,6 +11,9 @@
 from IRplacing_lib import *
 from IRmoving_lib import *
 
+ROW = 0
+COL = 1
+
 class Player:
 
     def __init__(self, colour):
@@ -33,10 +36,10 @@ class Player:
 
         for i in range(8):
             if (i == 0) or (i == 7):
-                self.board.append(['X','','','','','','','X'])
+                self.board.append(['X','-','-','-','-','-','-','X'])
 
             else:
-                self.board.append(['','','','','','','',''])
+                self.board.append(['-','-','-','-','-','-','-','-'])
 
     #**************************************************************************
 
@@ -67,10 +70,12 @@ class Player:
         """
 
         if turns >= 24:
-            return IRplayer.moving_phase(self, turns)
-
+            move = IRplayer.moving_phase(self, turns)
         else:
-            return IRplayer.placing_phase(self, turns)
+            move = IRplayer.placing_phase(self, turns)
+
+        Player.update(self, move)
+        return move
 
 
     #***************************************************************************
@@ -88,10 +93,10 @@ class Player:
         """
 
         if self.colour == "black":
-            self.board[action[1]][action[0]] = "O"
+            self.board[action[COL]][action[ROW]] = "O"
 
         else:
-            self.board[action[1]][action[0]] = "@"
+            self.board[action[COL]][action[ROW]] = "@"
 
         self.opponent_locations.append(action)
 
@@ -140,38 +145,38 @@ def check_legal(player, toPos, turnNum):
     if turnNum < PLACING:
         # Bounds Check
         #Check Row
-        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_ROW):
+        if (toPos[ROW] > MAX_ROW or toPos[ROW] < MIN_ROW):
             return False
 
             # Check Col
-        if (toPos[COL_IDX] > MAX_COL or toPos[COL_IDX] < MIN_COL):
+        if (toPos[COL] > MAX_COL or toPos[COL] < MIN_COL):
             return False
 
             # Checks on Smallest Board Size
     elif turnNum > SHRINK2:
         # Bounds Check
         # Check Row
-        if (toPos[ROW_IDX] > BRD_BOUND_HIGH2 or toPos[ROW_IDX] < BRD_BOUND_LOW2):
+        if (toPos[ROW] > BRD_BOUND_HIGH2 or toPos[ROW] < BRD_BOUND_LOW2):
             return False
 
             # Check Col
-        if (toPos[COL_IDX] > BRD_BOUND_HIGH2 or toPos[COL_IDX] < BRD_BOUND_LOW2):
+        if (toPos[COL] > BRD_BOUND_HIGH2 or toPos[COL] < BRD_BOUND_LOW2):
             return False
 
             # Check on first shrink size
     elif turnNum > SHRINK1:
         # Bounds Check
         # Check Row
-        if (toPos[ROW_IDX] > BRD_BOUND_HIGH1 or toPos[ROW_IDX] < BRD_BOUND_LOW1):
+        if (toPos[ROW] > BRD_BOUND_HIGH1 or toPos[ROW] < BRD_BOUND_LOW1):
             return False
 
             # Check Col
-        if (toPos[COL_IDX] > BRD_BOUND_HIGH1 or toPos[COL_IDX] < BRD_BOUND_LOW1):
+        if (toPos[COL] > BRD_BOUND_HIGH1 or toPos[COL] < BRD_BOUND_LOW1):
             return False
 
         # Check the piece isn't moving into an illegal piece
         # TODO: Check Jump as well
-    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] != ""):
+    if (board[toPos[ROW]][toPos[COL]] != "-"):
         return False
 
         # Thus the move is legal
@@ -191,8 +196,8 @@ def check_self_die(state, new_pos):
         state:      The Board Array as defined above
         new_pos:    The position white is trying to move to.
     """
-    piece_i = new_pos[0]
-    piece_j = new_pos[1]
+    piece_i = new_pos[ROW]
+    piece_j = new_pos[COL]
 
     if piece_i == 0 or piece_i == 7:
         if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
@@ -310,11 +315,11 @@ def check_move_kill(board, new_pos, colour):
 
     for move in bufferss:
 
-        pos_x = new_pos[0] + move[0]
-        pos_y = new_pos[1] + move[1]
+        pos_x = new_pos[ROW] + move[ROW]
+        pos_y = new_pos[COL] + move[COL]
 
-        pos_2x = new_pos[0] + 2*move[0]
-        pos_2y = new_pos[1] + 2*move[1]
+        pos_2x = new_pos[ROW] + 2*move[ROW]
+        pos_2y = new_pos[COL] + 2*move[COL]
 
 
         if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):

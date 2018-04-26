@@ -11,7 +11,10 @@
 from placing_lib import *
 from moving_lib import *
 
-class player:
+ROW = 0
+COL = 1
+
+class Player:
     def __init__(self, colour):
         # Stuff
         """
@@ -32,10 +35,10 @@ class player:
 
         for i in range(8):
             if (i == 0) or (i == 7):
-                self.board.append(['X','','','','','','','X'])
+                self.board.append(['X','-','-','-','-','-','-','X'])
 
             else:
-                self.board.append(['','','','','','','',''])
+                self.board.append(['-','-','-','-','-','-','-','-'])
 
     #**************************************************************************
 
@@ -66,10 +69,12 @@ class player:
         """
 
         if turns >= 24:
-            return moving_phase(self, turns)
-
+            move = player.moving_phase(self, turns)
         else:
-            return placing_phase(self, turns)
+            move = player.placing_phase(self, turns)
+
+        Player.update(self, move)
+        return move
 
 
     #***************************************************************************
@@ -87,10 +92,10 @@ class player:
         """
 
         if self.colour == "black":
-            self.board[action[1], action[0]] = "O"
+            self.board[action[COL], action[ROW]] = "O"
 
         else:
-            self.board[action[1], action[0]] = "@"
+            self.board[action[COL], action[ROW]] = "@"
 
         self.opponent_locations.append(action)
 
@@ -125,8 +130,6 @@ def check_legal(player, toPos, turnNum):
         MIN_COL = 0
 
     # Number defs
-    ROW_IDX = 0
-    COL_IDX = 1
     PLACING = 24
     SHRINK1 = 128
     BRD_BOUND_LOW1 = 1
@@ -190,8 +193,8 @@ def check_self_die(state, new_pos):
         state:      The Board Array as defined above
         new_pos:    The position white is trying to move to.
     """
-    piece_i = new_pos[0]
-    piece_j = new_pos[1]
+    piece_i = new_pos[ROW]
+    piece_j = new_pos[COL]
 
     if piece_i == 0 or piece_i == 7:
         if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
@@ -309,11 +312,11 @@ def check_move_kill(board, new_pos, colour):
 
     for move in bufferss:
 
-        pos_x = new_pos[0] + move[0]
-        pos_y = new_pos[1] + move[1]
+        pos_x = new_pos[ROW] + move[ROW]
+        pos_y = new_pos[COL] + move[COL]
 
-        pos_2x = new_pos[0] + 2*move[0]
-        pos_2y = new_pos[1] + 2*move[1]
+        pos_2x = new_pos[ROW] + 2*move[ROW]
+        pos_2y = new_pos[COL] + 2*move[COL]
 
 
     if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
