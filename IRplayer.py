@@ -1,5 +1,5 @@
 """****************************************************************************
-* player.py
+* irrationalPlayer/player.py
 * Alistair Moffat Appreciation Society
 * Amy Rieck and Luke Hedt
 * lhedt@student.unimelb.edu.au
@@ -8,10 +8,11 @@
 *
 * Comments: It Begins
 *****************************************************************************"""
-from placing_lib import *
-from moving_lib import *
+from IRplacing_lib import *
+from IRmoving_lib import *
 
-class player:
+class Player:
+
     def __init__(self, colour):
         # Stuff
         """
@@ -66,10 +67,10 @@ class player:
         """
 
         if turns >= 24:
-            return moving_phase(self, turns)
+            return IRplayer.moving_phase(self, turns)
 
         else:
-            return placing_phase(self, turns)
+            return IRplayer.placing_phase(self, turns)
 
 
     #***************************************************************************
@@ -87,10 +88,10 @@ class player:
         """
 
         if self.colour == "black":
-            self.board[action[1], action[0]] = "O"
+            self.board[action[1]][action[0]] = "O"
 
         else:
-            self.board[action[1], action[0]] = "@"
+            self.board[action[1]][action[0]] = "@"
 
         self.opponent_locations.append(action)
 
@@ -316,16 +317,16 @@ def check_move_kill(board, new_pos, colour):
         pos_2y = new_pos[1] + 2*move[1]
 
 
-    if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
+        if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
 
-        try:
-            piece_e = board[pos_x][pos_y]
-            piece_s = board[pos_2x][pos_2y]
+            try:
+                piece_e = board[pos_x][pos_y]
+                piece_s = board[pos_2x][pos_2y]
 
-            if ((piece_e == ene) and (piece_s == symb or piece_s == "X")):
-                kill_count += 1
+                if piece_e == ene and (piece_s == symb or piece_s == "X"):
+                    kill_count += 1
 
-        except (IndexError, ValueError):
-            pass
+            except (IndexError, ValueError):
+                pass
 
     return kill_count
