@@ -55,6 +55,39 @@ def get_available_moves(board, piece_locations, turns):
 
   return all_moves
 
+def evaluation_function(state, move, min):
+    score = 0
+    dead = False
+
+    if min:
+        #Min
+        if check_self_die(state, move):
+            score = 5
+            dead = True
+
+        kills = check_move_kill(state, move):
+
+        if kills:
+            score = 0
+
+        if not kills and not dead:
+            score  = 3
+
+    else:
+        #Max
+        if check_self_die(state, move):
+            score = 0
+            dead = True
+
+        kills = check_move_kill(state, move)
+
+        if kills:
+            score = 5*kill
+
+        if not kills and not dead:
+            score  = 3
+
+    return score
 
 """ Attempt at a minimax implementation """
 def minimax(self, turns):
@@ -99,19 +132,7 @@ def minimax(self, turns):
      current scoring system is fucking shIT
      """
 
-    if check_self_die(new_state, move[1]):
-      dead = True
-      score = 0
-
-    kill_score = check_move_kill(new_state, move[1])
-
-
-    if kill_score:
-      score = 5*kill_score
-
-    elif not dead:
-      score = 2
-
+    score = evaluation_function(new_state, move[1], False)
     opp_score = min_play(new_state, colour)
     new_state.score = opps_score
 
@@ -160,18 +181,7 @@ def min_play(state, colour):
      - Neutral move is worth 2
      """
 
-    if check_self_die(new_state, move[1]):
-      dead = True
-      score = 5
-
-
-    if check_move_kill(new_state, move[1])
-      score = 0
-
-    elif not dead:
-      score = 2
-
-    new_state.score = score
+    new_state.score = evaluation_function(new_state, move[1], True)
     next_state.append(new_state)
 
     if new_state.score <= worst_value:
