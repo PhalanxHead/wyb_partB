@@ -103,8 +103,11 @@ def minimax(self, turns):
       dead = True
       score = 0
 
-    if check_move_kill(new_state, move[1]):
-      score = 5
+    kill_score = check_move_kill(new_state, move[1])
+
+
+    if kill_score:
+      score = 5*kill_score
 
     elif not dead:
       score = 2
@@ -161,8 +164,9 @@ def min_play(state, colour):
       dead = True
       score = 5
 
-    if check_move_kill(new_state, move[1]):
-      score = 5
+
+    if check_move_kill(new_state, move[1])
+      score = 0
 
     elif not dead:
       score = 2
