@@ -1,0 +1,35 @@
+Structure of the Solution:
+We have split up our solution into 3 python scripts, so we can keep each of our ideas
+for one part of the game (e.g. placing phase and moving phase), separated from each other
+so we are able to find certain functions easier and also experiment with different parts of the game.
+
+So our solution contains:
+- player.py
+- placing_lib.py
+- moving_lib.py
+
+The player.py contains functions that are used across both phases of the game,
+and it also contains the class player and the required methods as per the specification.
+
+The placing_lib.py contains the functions that produce the agent's strategy within the placing
+phase of the game. The major function is placing_phase() which gives a position to place
+the next piece to back to the action() method within the player.py.
+
+The moving_lib.py contains everything to do with the moving phase of the game. The major
+components of the file are the moving_phase() function which gives an action set to the player.py.
+Then also there is our "node" class Board_State, that we are currently using for nodes in our game trees.
+This class is used heavily within our solution as our solution for the moving phase is to expand through
+game trees and then pick the optimal state (firstly we're using alpha-beta pruning and mimimax).
+
+Placing Phase Strategy:
+Book Learning:
+
+
+Moving Phase Strategy:
+Minimax and Alpha Beta Pruning Implementation:
+Our  first implementation for our agent was taken from the lectures as we wanted something
+that we could build off and then produce additional optimisations on. Our first Implementation
+used minimax and alpha-beta pruning to reduce the memory and time complexity for selecting the next action.
+For this purpose we determined an evaluation function to score our Board_State, this scoring was
+dependent on if a move could kill off any opponent pieces, if the piece would be killed itself and also
+how safe a move was, if it was closer to opponent or ally pieces.

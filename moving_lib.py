@@ -58,6 +58,27 @@ def get_available_moves(board, piece_locations, turns):
 
   return all_moves
 
+def evaluation_function(state, move):
+    """
+    Our Evaluation function that determines a score for a specific game state,
+    this score is then used within the minimax algorithm to find the optimal play
+    """
+    score = 0
+    dead = False
+
+    if check_self_die(state, move):
+        score = 5
+        dead = True
+
+    kills = check_move_kill(state, move):
+
+    if kills:
+        score = 0
+
+    if not kills and not dead:
+        score  = 3
+
+    return score
 
 """ Attempt at a minimax implementation """
 def minimax(self, turns):
@@ -94,6 +115,13 @@ def minimax(self, turns):
         new_state.piece_locations.remove(move[ROW])
         new_state.piece_locations.append(move[COL])
 
+<<<<<<< HEAD
+    if best_value == -1:
+        best_value = min_play(new_state, colour, -1)
+
+    opp_score = min_play(new_state, colour, best_value)
+    new_state.score = opps_score
+=======
         """ We need to now somehow determine the scores of each of the moves here,
         Firstly let's try define some basic score shit lol:
             - Kill is worth 5
@@ -114,11 +142,16 @@ def minimax(self, turns):
 
         opp_score = min_play(new_state, colour)
         new_state.score = opps_score
+>>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
         all_states.append(new_state)
 
+<<<<<<< HEAD
+  for state in all_states:
+=======
 
     for state in all_states:
+>>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
         if state.score > best_value:
             best_value = state.score
@@ -126,8 +159,13 @@ def minimax(self, turns):
 
     return best_move_set
 
+<<<<<<< HEAD
+def min_play(state, colour, best_value_found):
+  """ Form the tree for the opponent now """
+=======
 def min_play(state, colour):
     """ Form the tree for the opponent now """
+>>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
     worst_value = 100
     starting_state = state.board
@@ -153,6 +191,15 @@ def min_play(state, colour):
     new_state.piece_locations.remove(move[ROW])
     new_state.piece_locations.append(move[COL])
 
+<<<<<<< HEAD
+    new_state.score = evaluation_function(new_state, move[1])
+
+    """ Alpha - Beta Pruning Addition """
+    if best_value_found:
+
+        if new_state.score < best_value_found:
+            return 0
+=======
     """ Scores are reversed as in terms of our player but this is the enemy player's
     fucntion
         - Kill is worth 0
@@ -169,8 +216,8 @@ def min_play(state, colour):
 
     elif not dead:
         score = 2
+>>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
-    new_state.score = score
     next_state.append(new_state)
 
     if new_state.score <= worst_value:
