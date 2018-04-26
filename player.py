@@ -12,7 +12,6 @@ from placing_lib import *
 from moving_lib import *
 
 class player:
-
     def __init__(self, colour):
         # Stuff
         """
@@ -98,7 +97,7 @@ class player:
 
 """ ************************************************************************* """
 
-def check_legal(board, toPos, turnNum):
+def check_legal(player, toPos, turnNum):
     """
     Checks if the proposed move is legal
     Returns:
@@ -106,17 +105,29 @@ def check_legal(board, toPos, turnNum):
         False:  if move is illegal
     ===========================================================================
     Input Variables:
-        board:  Board as defined in player class
-        toPos:  (row, col)
+        Player:     A Player object
+        toPos:      (row, col)
+        turnNum:    The number of turn that it is
     """
+
+    board = player.board
+
+    if player.colour == "white":
+        MAX_ROW = 5
+        MAX_COL = 7
+        MIN_ROW = 0
+        MIN_COL = 0
+
+    else:
+        MAX_ROW = 7
+        MAX_COL = 7
+        MIN_ROW = 2
+        MIN_COL = 0
 
     # Number defs
     ROW_IDX = 0
     COL_IDX = 1
     PLACING = 24
-    MAX_ROW = 5
-    MAX_RC = 7
-    MIN_RC = 0
     SHRINK1 = 128
     BRD_BOUND_LOW1 = 1
     BRD_BOUND_HIGH1 = 6
@@ -128,11 +139,11 @@ def check_legal(board, toPos, turnNum):
     if turnNum < PLACING:
         # Bounds Check
         #Check Row
-        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_RC):
+        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_ROW):
             return False
 
             # Check Col
-        if (toPos[COL_IDX] > MAX_RC or toPos[COL_IDX] < MIN_RC):
+        if (toPos[COL_IDX] > MAX_COL or toPos[COL_IDX] < MIN_COL):
             return False
 
             # Checks on Smallest Board Size
@@ -157,14 +168,9 @@ def check_legal(board, toPos, turnNum):
         if (toPos[COL_IDX] > BRD_BOUND_HIGH1 or toPos[COL_IDX] < BRD_BOUND_LOW1):
             return False
 
-
         # Check the piece isn't moving into an illegal piece
         # TODO: Check Jump as well
-    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O'):
-        return False
-
-        # Check the piece won't die
-    if check_self_die(board, toPos) == True:
+    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] != ""):
         return False
 
         # Thus the move is legal

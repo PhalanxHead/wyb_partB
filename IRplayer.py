@@ -8,8 +8,8 @@
 *
 * Comments: It Begins
 *****************************************************************************"""
-from placing_lib import *
-from moving_lib import *
+from IRplacing_lib import *
+from IRmoving_lib import *
 
 class Player:
 
@@ -31,12 +31,12 @@ class Player:
         self.piece_locations = []
         self.opponent_locations = []
 
-      	for i in range(8):
-      		if (i == 0) or (i == 7):
-      			self.board.append(['X','','','','','','','X'])
+        for i in range(8):
+            if (i == 0) or (i == 7):
+                self.board.append(['X','','','','','','','X'])
 
-      		else:
-      			self.board.append(['','','','','','','',''])
+            else:
+                self.board.append(['','','','','','','',''])
 
     #**************************************************************************
 
@@ -67,10 +67,10 @@ class Player:
         """
 
         if turns >= 24:
-        	return moving_phase(self, turns)
+            return IRplayer.moving_phase(self, turns)
 
         else:
-        	return placing_phase(self, turns)
+            return IRplayer.placing_phase(self, turns)
 
 
     #***************************************************************************
@@ -87,18 +87,18 @@ class Player:
         Your player will not be notified about its own actions.
         """
 
-        if self.colour = "black":
-        	self.board[action[1], action[0]] = "O"
+        if self.colour == "black":
+            self.board[action[1]][action[0]] = "O"
 
         else:
-        	self.board[action[1], action[0]] = "@"
+            self.board[action[1]][action[0]] = "@"
 
         self.opponent_locations.append(action)
 
 
 """ ************************************************************************* """
 
-def check_legal(board, toPos, turnNum):
+def check_legal(player, toPos, turnNum):
     """
     Checks if the proposed move is legal
     Returns:
@@ -106,17 +106,29 @@ def check_legal(board, toPos, turnNum):
         False:  if move is illegal
     ===========================================================================
     Input Variables:
-        board:  Board as defined in player class
-        toPos:  (row, col)
+        Player:     A Player object
+        toPos:      (row, col)
+        turnNum:    The number of turn that it is
     """
+
+    board = player.board
+
+    if player.colour == "white":
+        MAX_ROW = 5
+        MAX_COL = 7
+        MIN_ROW = 0
+        MIN_COL = 0
+
+    else:
+        MAX_ROW = 7
+        MAX_COL = 7
+        MIN_ROW = 2
+        MIN_COL = 0
 
     # Number defs
     ROW_IDX = 0
     COL_IDX = 1
     PLACING = 24
-    MAX_ROW = 5
-    MAX_RC = 7
-    MIN_RC = 0
     SHRINK1 = 128
     BRD_BOUND_LOW1 = 1
     BRD_BOUND_HIGH1 = 6
@@ -128,11 +140,11 @@ def check_legal(board, toPos, turnNum):
     if turnNum < PLACING:
         # Bounds Check
         #Check Row
-        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_RC):
+        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_ROW):
             return False
 
             # Check Col
-        if (toPos[COL_IDX] > MAX_RC or toPos[COL_IDX] < MIN_RC):
+        if (toPos[COL_IDX] > MAX_COL or toPos[COL_IDX] < MIN_COL):
             return False
 
             # Checks on Smallest Board Size
@@ -157,17 +169,10 @@ def check_legal(board, toPos, turnNum):
         if (toPos[COL_IDX] > BRD_BOUND_HIGH1 or toPos[COL_IDX] < BRD_BOUND_LOW1):
             return False
 
-
         # Check the piece isn't moving into an illegal piece
         # TODO: Check Jump as well
-    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] in 'X@O':
+    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] != ""):
         return False
-
-        """ This is technically legal so an irrational player could do this
-        # Check the piece won't die
-    if check_self_die(board, toPos) == True:
-        return False
-        """
 
         # Thus the move is legal
     return True
@@ -290,38 +295,38 @@ def check_self_die(state, new_pos):
 """ ************************************************************************* """
 
 def check_move_kill(board, new_pos, colour):
-	"""
-	Alright, let's do some kill confirmed kind of shit now
-	"""
-	buffers = [(1,0), (-1,0), (0,1),(0,-1)]
-	kill_count = 0
+    """
+    Alright, let's do some kill confirmed kind of shit now
+    """
+    buffers = [(1,0), (-1,0), (0,1),(0,-1)]
+    kill_count = 0
 
-	if colour = "black":
-		sym = "@"
-		ene = "O"
-	else:
-		sym = "O"
-		ene = "@"
+    if colour == "black":
+        sym = "@"
+        ene = "O"
+    else:
+        sym = "O"
+        ene = "@"
 
-	for move in bufferss:
+    for move in bufferss:
 
-		pos_x = new_pos[0] + move[0]
-		pos_y = new_pos[1] + move[1]
+        pos_x = new_pos[0] + move[0]
+        pos_y = new_pos[1] + move[1]
 
-		pos_2x = new_pos[0] + 2*move[0]
-		pos_2y = new_pos[1] + 2*move[1]
+        pos_2x = new_pos[0] + 2*move[0]
+        pos_2y = new_pos[1] + 2*move[1]
 
 
-		if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
+        if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
 
-			try:
-				piece_e = board[pos_x][pos_y]
-				piece_s = board[pos_2x][pos_2y]
+            try:
+                piece_e = board[pos_x][pos_y]
+                piece_s = board[pos_2x][pos_2y]
 
-				if piece_e == ene and (piece_s == symb or piece_s == "X"):
-					kill_count += 1
+                if piece_e == ene and (piece_s == symb or piece_s == "X"):
+                    kill_count += 1
 
-			except (IndexError, ValueError):
-				pass
+            except (IndexError, ValueError):
+                pass
 
-	return kill_count
+    return kill_count
