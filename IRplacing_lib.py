@@ -26,6 +26,7 @@ def placing_phase(self, turns):
 
     return (move[COL], move[ROW])
 
+""" ************************************************************************* """
 
 def random_place():
     """

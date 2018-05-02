@@ -10,6 +10,7 @@
 *****************************************************************************"""
 import IRplayer
 import IRplacing_lib
+import random
 
 ROW = 0
 COL = 1
@@ -29,32 +30,45 @@ class Board_State:
         self.old_pos = old_pos
         self.new_pos = new_pos
 
+""" ************************************************************************* """
 
 def moving_phase(self, turns):
     """
     Make a random legal move
+    Returns:
+        move: A token move in the form ((fromCol, fromRow),(toCol, toRow))
+    ==============================
+    Input Variables:
+        self:   A Player object as defined by the specification
+        turns:  The number of turns taken (incremented by 1 for each move,
+                ie the second round of moves is turns 3 and 4)
     """
-    move_set = get_available_moves(self.board, self.piece_locations, turns)
 
-    move = move_set(random.randint(len(move_set)))
-
-    return move
-
-def get_available_moves(board, piece_locations, turns):
-    """
-    Function that produces all available moves for the player. The structure of
-    the output is a list of nested tuples such that we have (old, new) positions.
-    """
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
-    all_moves = []
+    fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
 
-    for old_pos in self.piece_locations:
+    bufferInd = random.randrange(0, len(buffers))
+    toSquare = moveCalc(fromSquare, buffers[bufferInd])
 
-        for move in buffers:
+    while not IRplayer.check_legal(self, toSquare, turns):
+        bufferInd = random.randrange(0, len(buffers))
+        toSquare = moveCalc(fromSquare, buffers[bufferInd])
 
-            new_pos = (old_pos[ROW] + move[ROW], old_pos[COL] + move[COL])
+    return (fromSquare, toSquare)
 
-            if check_legal(self.board, new_pos, turns):
-                all_moves.append((old_pos, new_pos))
+""" ************************************************************************* """
 
-    return all_moves
+def moveCalc(fromSquare, direction):
+    """
+    Moves the piece in the specified direction
+    Returns:
+        newSquare:  (row, col)
+    ==========================
+    Input Variables:
+        fromSquare: The square the piece being moved is on, in form (row, col)
+        direction:  The direction to move the piece in, in form (0,1) (For Right)
+    """
+    newSquare_row = fromSquare[ROW] + direction[ROW]
+    newSquare_col = fromSquare[COL] + direction[COL]
+
+    return (newSquare_row, newSquare_col)

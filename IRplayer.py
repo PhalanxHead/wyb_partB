@@ -30,6 +30,7 @@ class Player:
         self.board = []
         self.piece_locations = []
         self.opponent_locations = []
+        self.moving = False
 
         for i in range(8):
             if (i == 0) or (i == 7):
@@ -52,12 +53,17 @@ class Player:
                     ie the second round of moves is turns 3 and 4)
         """
 
-        if turns >= 24:
+        """ Check that we haven't entered the moving phase """
+        if (turns == 0) and (len(self.opponent_locations) != 0):
+            self.moving = True
+
+
+        if self.moving == True:
             move = IRplayer.moving_phase(self, turns)
         else:
             move = IRplayer.placing_phase(self, turns)
 
-        Player.update(self, move)
+        Player.updateSelf(self, move)
         return move
 
 
@@ -77,32 +83,65 @@ class Player:
         if action == None:
             return
 
-        phase = "placing"
-        fromSquare = ()
-        toSquare = ()
-
         """ Distinguish a placing from a moving """
-        if isinstance(action[0], int):
-            toSquare = action
-        else:
+        if self.moving == True:
             fromSquare = action[0]
             toSquare = action[1]
-            phase = "moving"
+        else:
+            toSquare = action
 
 
         """ Put the piece in its new location """
         if self.colour == "black":
-            self.board[toSquare[COL], toSquare[ROW]] = "O"
+            self.board[toSquare[COL]][toSquare[ROW]] = "O"
 
         else:
-            self.board[toSquare[COL], toSquare[ROW]] = "@"
+            self.board[toSquare[COL]][toSquare[ROW]] = "@"
 
         self.opponent_locations.append(toSquare)
 
         """ Remove piece from old location (if applicable) """
-        if phase == "moving":
-            self.board[fromSquare[COL], fromSquare[ROW]] = "-"
+        if self.moving == True:
+            self.board[fromSquare[COL]][fromSquare[ROW]] = "-"
             self.opponent_locations.remove(fromSquare)
+
+    #***************************************************************************
+
+    def updateSelf(self, action):
+        """
+        Called by Player to update Your own actions.
+        ==============================
+        Input Variables:
+         self:   A Player object as defined by the specification
+         action: A token move as defined in the specification:
+                 Either (col, row) or ((fromCol, fromRow),(toCol, toRow))
+        """
+
+        """ Skipped move case """
+        if action == None:
+            return
+
+        """ Distinguish a placing from a moving """
+        if self.moving == True:
+            fromSquare = action[0]
+            toSquare = action[1]
+        else:
+         toSquare = action
+
+
+        """ Put the piece in its new location """
+        if self.colour == "black":
+            self.board[toSquare[COL]][toSquare[ROW]] = "@"
+
+        else:
+            self.board[toSquare[COL]][toSquare[ROW]] = "O"
+
+        self.piece_locations.append(toSquare)
+
+        """ Remove piece from old location (if applicable) """
+        if self.moving == True:
+            self.board[fromSquare[COL]][fromSquare[ROW]] = "-"
+            self.piece_locations.remove(fromSquare)
 
 
 """ ************************************************************************* """
@@ -337,3 +376,12 @@ def check_move_kill(board, new_pos, colour):
                 pass
 
     return kill_count
+
+""" ************************************************************************* """
+
+def printBoard(self):
+    for col in self.board:
+        for row in col:
+            print("%s " %row, end='')
+        print()
+    print("\n")
