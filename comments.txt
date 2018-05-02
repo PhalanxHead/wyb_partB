@@ -19,7 +19,7 @@ The moving_lib.py contains everything to do with the moving phase of the game. T
 components of the file are the moving_phase() function which gives an action set to the player.py.
 Then also there is our "node" class Board_State, that we are currently using for nodes in our game trees.
 This class is used heavily within our solution as our solution for the moving phase is to expand through
-game trees and then pick the optimal state (firstly we're using alpha-beta pruning and mimimax).
+game trees and then pick the optimal state (firstly we're using alpha-beta pruning and minimax).
 
 Placing Phase Strategy:
 Book Learning:

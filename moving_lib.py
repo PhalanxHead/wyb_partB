@@ -115,13 +115,11 @@ def minimax(self, turns):
         new_state.piece_locations.remove(move[ROW])
         new_state.piece_locations.append(move[COL])
 
-<<<<<<< HEAD
     if best_value == -1:
         best_value = min_play(new_state, colour, -1)
 
     opp_score = min_play(new_state, colour, best_value)
     new_state.score = opps_score
-=======
         """ We need to now somehow determine the scores of each of the moves here,
         Firstly let's try define some basic score shit lol:
             - Kill is worth 5
@@ -142,16 +140,11 @@ def minimax(self, turns):
 
         opp_score = min_play(new_state, colour)
         new_state.score = opps_score
->>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
         all_states.append(new_state)
 
-<<<<<<< HEAD
-  for state in all_states:
-=======
 
     for state in all_states:
->>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
         if state.score > best_value:
             best_value = state.score
@@ -159,14 +152,9 @@ def minimax(self, turns):
 
     return best_move_set
 
-<<<<<<< HEAD
-def min_play(state, colour, best_value_found):
-  """ Form the tree for the opponent now """
-=======
+
 def min_play(state, colour):
     """ Form the tree for the opponent now """
->>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
-
     worst_value = 100
     starting_state = state.board
     available_moves = get_available_moves(starting_state, state.opponent_pieces, turns)
@@ -191,7 +179,6 @@ def min_play(state, colour):
     new_state.piece_locations.remove(move[ROW])
     new_state.piece_locations.append(move[COL])
 
-<<<<<<< HEAD
     new_state.score = evaluation_function(new_state, move[1])
 
     """ Alpha - Beta Pruning Addition """
@@ -199,7 +186,7 @@ def min_play(state, colour):
 
         if new_state.score < best_value_found:
             return 0
-=======
+
     """ Scores are reversed as in terms of our player but this is the enemy player's
     fucntion
         - Kill is worth 0
@@ -216,7 +203,6 @@ def min_play(state, colour):
 
     elif not dead:
         score = 2
->>>>>>> 2dfa5606f335dea32936ccc638631784e8a0eea5
 
     next_state.append(new_state)
 
@@ -224,56 +210,3 @@ def min_play(state, colour):
         worst_value = new_state.score
 
     return worst_value
-
-"""
-# Very Basic Untailored Minimax Implementation
-# From http://giocc.com/concise-implementation-of-minimax-through-higher-order-functions.html
-def minimax(game_state):
-    moves = game_state.get_available_moves()
-    best_move = moves[ROW]
-    best_score = float('-inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = min_play(clone)
-
-        if score > best_score:
-            best_move = move
-            best_score = score
-
-  return best_move
-
-def min_play(game_state):
-    if game_state.is_gameover():
-        return evaluate(game_state)
-
-    moves = game_state.get_available_moves()
-    best_score = float('inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = max_play(clone)
-
-        if score < best_score:
-            best_move = move
-        best_score = score
-
-  return best_score
-
-def max_play(game_state):
-    if game_state.is_gameover():
-        return evaluate(game_state)
-
-  moves = game_state.get_available_moves()
-  best_score = float('-inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = min_play(clone)
-
-    if score > best_score:
-      best_move = move
-      best_score = score
-
-  return best_score
-"""
