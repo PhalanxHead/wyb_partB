@@ -44,15 +44,14 @@ def moving_phase(self, turns):
                 ie the second round of moves is turns 3 and 4)
     """
 
-    buffers = [(1,0),(-1,0),(0,1),(0,-1)]
     fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
+    legalMoves = getAvailableMoves(self, fromSquare, turns)
 
-    bufferInd = random.randrange(0, len(buffers))
-    toSquare = moveCalc(fromSquare, buffers[bufferInd])
+    while len(legalMoves) == 0:
+        fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
+        legalMoves = getAvailableMoves(self, fromSquare, turns)
 
-    while not IRplayer.check_legal(self, toSquare, turns):
-        bufferInd = random.randrange(0, len(buffers))
-        toSquare = moveCalc(fromSquare, buffers[bufferInd])
+    toSquare = legalMoves[random.randrange(0, len(legalMoves))]
 
     return (fromSquare, toSquare)
 
@@ -65,10 +64,26 @@ def moveCalc(fromSquare, direction):
         newSquare:  (row, col)
     ==========================
     Input Variables:
-        fromSquare: The square the piece being moved is on, in form (row, col)
-        direction:  The direction to move the piece in, in form (0,1) (For Right)
+        fromSquare: The square the piece being moved is on, in form (col, row)
+        direction:  The direction to move the piece in, in form (0,1) (For Down)
     """
     newSquare_row = fromSquare[ROW] + direction[ROW]
     newSquare_col = fromSquare[COL] + direction[COL]
 
     return (newSquare_row, newSquare_col)
+
+""" ************************************************************************* """
+
+def getAvailableMoves(self, square, turns):
+    """
+    Returns a list of the available moves for the square
+    """
+    legalMoves = []
+    buffers = [(1,0),(-1,0),(0,1),(0,-1)]
+
+    for move in buffers:
+        newMove = moveCalc(square, move)
+        if IRplayer.check_legal(self, newMove, turns) == True:
+            legalMoves.append(newMove)
+
+    return legalMoves

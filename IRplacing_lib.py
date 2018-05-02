@@ -24,13 +24,13 @@ def placing_phase(self, turns):
     while IRplayer.check_legal(self, move, turns) == False:
         move = random_place()
 
-    return (move[COL], move[ROW])
+    return move
 
 """ ************************************************************************* """
 
 def random_place():
     """
-    Returns a random board position
+    Returns a random board position in form (row, col)
     """
     col = random.randint(0,7)
     row = random.randint(0,5)
