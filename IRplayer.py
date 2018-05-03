@@ -68,8 +68,10 @@ class Player:
         invertMove(move)
 
         Player.updateSelf(self, move)
-        print("\n Player Board:")
+        print(move)
+        print("Player Board:")
         printBoard(self)
+
 
         return move
 
@@ -442,12 +444,12 @@ def removeDead(player):
         player: the player class
     """
     for piece in player.piece_locations:
-        if checkIfDead(player, piece):
+        if checkIfDead(player, piece) == True:
             player.piece_locations.remove(piece)
             player.board[piece[COL]][piece[ROW]] = "-"
 
     for piece in player.opponent_locations:
-        if checkIfDead(player, piece):
+        if checkIfDead(player, piece) == True:
             player.opponent_locations.remove(piece)
             player.board[piece[COL]][piece[ROW]] = "-"
 
@@ -455,7 +457,6 @@ def removeDead(player):
 
 def checkIfDead(player, piece):
     """
-    * Mostly lifted from Part A solution. NOT WORKING. TODO
     Checks if a piece is dead or not.
     Returns:
         True if piece is dead
@@ -465,37 +466,28 @@ def checkIfDead(player, piece):
         piece:  The square of the piece being checked (col, row)
     """
 
-    state = player.board
+    board = player.board
+    piece_symb = player.board[piece[COL]][piece[ROW]]
+    KS = "OX" if (piece_symb == "@") else "@X"
 
-    if player.colour == "white":
-        KS = "O"
-    else:
-        KS = "@"
-
-    piece_i = piece[ROW]
-    piece_j = piece[COL]
-
-    """ Checking if a piece has been killed vertically"""
-    if piece_i == 0 or piece_i == 7:
-        if (state[piece_i][piece_j + 1] == KS) and (state[piece_i][piece_j - 1] == KS) \
-        or (state[piece_i][piece_j + 1] == KS) and (state[piece_i][piece_j - 1] == "X") \
-        or (state[piece_i][piece_j + 1] == "X") and (state[piece_i][piece_j - 1] == KS):
-
+    """ Check horizontally """
+    try:
+        if (board[piece[COL]+1][piece[ROW]] in KS) and \
+                (board[piece[COL]-1][piece[ROW]] in KS):
+            print("Killing Piece Horizontally ", piece)
             return True
+    except IndexError:
+        # Do nothing
+        pass
 
-            """ Checking if a piece has been killed horizontally """
-    elif piece_j == 0 or piece_j == 7:
-        if (state[piece_i + 1][piece_j] == KS) and (state[piece_i - 1][piece_j] == KS) \
-        or (state[piece_i + 1][piece_j] == "X") and (state[piece_i - 1][piece_j] == KS) \
-        or (state[piece_i + 1][piece_j] == KS) and (state[piece_i - 1][piece_j] == "X"):
-
+        """ Check Vertically """
+    try:
+        if (board[piece[COL]][piece[ROW]+1] in KS) and \
+                (board[piece[COL]][piece[ROW]-1] in KS):
+            print("Killing Piece Vertically ", piece)
             return True
-
-            """ Last Check in case something funny has happened. """
-    else:
-        if (state[piece_i][piece_j + 1] == KS) and (state[piece_i][piece_j - 1] == KS) \
-        or (state[piece_i + 1][piece_j] == KS) and (state[piece_i - 1][piece_j] == KS):
-
-           return True
+    except IndexError:
+        # Do nothing
+        pass
 
     return False
