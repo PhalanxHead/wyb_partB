@@ -27,6 +27,7 @@ class Player:
         """
 
         self.colour = colour
+        """ Reference as (row, col) """
         self.board = []
         self.piece_locations = []
         self.opponent_locations = []
@@ -65,20 +66,18 @@ class Player:
             move = IRplayer.placing_phase(self, turns)
 
         """ Invert move to keep with spec """
-        invertMove(move)
+        move = invert_move(move)
 
-        Player.updateSelf(self, move)
-        print(move)
-        print("Player Board:")
-        printBoard(self)
+        print(self.colour, " Move: ", move)
 
+        Player.update(self, move, False)
 
         return move
 
 
     #***************************************************************************
 
-    def update(self, action):
+    def update(self, action, oppPlayer=True):
         """
         Called by referee to update your agent of the opponent's actions.
         ==============================
@@ -86,11 +85,16 @@ class Player:
             self:   A Player object as defined by the specification
             action: A token move as defined in the specification:
                     Either (col, row) or ((fromCol, fromRow),(toCol, toRow))
+            oppPlayer:  True if the move is coming from the opposing player
+                        (ie if called by the referee)
         """
 
         """ Skipped move case """
         if action == None:
             return
+
+        """ Be consistent with board layout """
+        action = invert_move(action)
 
         """ Distinguish a placing from a moving """
         if isinstance(action[0], tuple):
@@ -100,61 +104,28 @@ class Player:
         else:
             toSquare = action
 
-        """ Put the piece in its new location """
-        if self.colour == "black":
-            self.board[toSquare[COL]][toSquare[ROW]] = "O"
+            """ Check if updating move from the opponent or yourself """
+        if oppPlayer:
+            """ Select appropriate piece to place """
+            placingPiece = "O" if (self.colour == "black") else "@"
+            locArray = self.opponent_locations
 
         else:
-            self.board[toSquare[COL]][toSquare[ROW]] = "@"
+            placingPiece = "@" if (self.colour == "black") else "O"
+            locArray = self.piece_locations
 
-        self.opponent_locations.append(toSquare)
+        self.board[toSquare[ROW]][toSquare[COL]] = placingPiece
+        locArray.append(toSquare)
+
 
         """ Remove piece from old location (if applicable) """
         if self.moving == True:
-            self.board[fromSquare[COL]][fromSquare[ROW]] = "-"
-            self.opponent_locations.remove(fromSquare)
+            self.board[fromSquare[ROW]][fromSquare[COL]] = "-"
+            locArray.remove(fromSquare)
 
-        removeDead(self)
-
-    #***************************************************************************
-
-    def updateSelf(self, action):
-        """
-        Called by Player to update Your own actions.
-        ==============================
-        Input Variables:
-         self:   A Player object as defined by the specification
-         action: A token move as defined in the specification:
-                 Either (col, row) or ((fromCol, fromRow),(toCol, toRow))
-        """
-
-        """ Skipped move case """
-        if action == None:
-            return
-
-        """ Distinguish a placing from a moving """
-        if self.moving == True:
-            fromSquare = action[0]
-            toSquare = action[1]
-        else:
-         toSquare = action
+        remove_dead(self, oppPlayer)
 
 
-        """ Put the piece in its new location """
-        if self.colour == "black":
-            self.board[toSquare[COL]][toSquare[ROW]] = "@"
-
-        else:
-            self.board[toSquare[COL]][toSquare[ROW]] = "O"
-
-        self.piece_locations.append(toSquare)
-
-        """ Remove piece from old location (if applicable) """
-        if self.moving == True:
-            self.board[fromSquare[COL]][fromSquare[ROW]] = "-"
-            self.piece_locations.remove(fromSquare)
-
-        removeDead(self)
 
 """ ************************************************************************* """
 
@@ -196,58 +167,40 @@ def check_legal(player, toPos, turnNum):
     BRD_BOUND_LOW2 = 2
     BRD_BOUND_HIGH2 = 5
 
-    toPos = invertMove(toPos)
-
     # Placing Phase Checks
     if player.moving == False:
         # Bounds Check
-        #Check Row
-        if (toPos[ROW] > MAX_ROW or toPos[ROW] < MIN_ROW):
+        if (toPos[ROW] > MAX_ROW or toPos[ROW] < MIN_ROW) or \
+                (toPos[COL] > MAX_COL or toPos[COL] < MIN_COL):
             return False
 
-            # Check Col
-        if (toPos[COL] > MAX_COL or toPos[COL] < MIN_COL):
-            return False
-
-        # Check largest board size
+    # Check largest board size
     elif turnNum < SHRINK1:
         # Bounds Check
-        # Check Row
-        if (toPos[ROW] > BRD_BOUND_HIGH0 or toPos[ROW] < BRD_BOUND_LOW0):
+        if (toPos[ROW] > BRD_BOUND_HIGH0 or toPos[ROW] < BRD_BOUND_LOW0) or \
+                (toPos[COL] > BRD_BOUND_HIGH0 or toPos[COL] < BRD_BOUND_LOW0):
             return False
 
-            # Check Col
-        if (toPos[COL] > BRD_BOUND_HIGH0 or toPos[COL] < BRD_BOUND_LOW0):
-            return False
-
-            # Checks on Smallest Board Size
+    # Checks on Smallest Board Size
     elif turnNum > SHRINK2:
         # Bounds Check
-        # Check Row
-        if (toPos[ROW] > BRD_BOUND_HIGH2 or toPos[ROW] < BRD_BOUND_LOW2):
+        if (toPos[ROW] > BRD_BOUND_HIGH2 or toPos[ROW] < BRD_BOUND_LOW2) or \
+                (toPos[COL] > BRD_BOUND_HIGH2 or toPos[COL] < BRD_BOUND_LOW2):
             return False
 
-            # Check Col
-        if (toPos[COL] > BRD_BOUND_HIGH2 or toPos[COL] < BRD_BOUND_LOW2):
-            return False
-
-            # Check on first shrink size
+    # Check on first shrink size
     else:
         # Bounds Check
-        # Check Row
-        if (toPos[ROW] > BRD_BOUND_HIGH1 or toPos[ROW] < BRD_BOUND_LOW1):
+        if (toPos[ROW] > BRD_BOUND_HIGH1 or toPos[ROW] < BRD_BOUND_LOW1) or \
+                (toPos[COL] > BRD_BOUND_HIGH1 or toPos[COL] < BRD_BOUND_LOW1):
             return False
 
-            # Check Col
-        if (toPos[COL] > BRD_BOUND_HIGH1 or toPos[COL] < BRD_BOUND_LOW1):
-            return False
-
-        """ Check the piece isn't moving into an illegal place """
-        # TODO: Check Jump as well
+    """ Check the piece isn't moving into an illegal place """
+    # TODO: Check Jump as well
     if (board[toPos[ROW]][toPos[COL]] != "-"):
         return False
 
-        # Thus the move is legal
+    # Thus the move is legal
     return True
 
 
@@ -404,22 +357,10 @@ def check_move_kill(board, new_pos, colour):
 
     return kill_count
 
-""" ************************************************************************* """
-
-def printBoard(player):
-    """
-    Prints the board
-    """
-    for col in player.board:
-        for row in col:
-            print("%s " %row, end='')
-        print()
-    print("\n")
-
 
 """ ************************************************************************* """
 
-def invertMove(move):
+def invert_move(move):
     """
     Inverts a move from (row, col) to (col, row) (or Vice Versa)
     Or from ((fromCol, fromRow), (toCOl, toRow)) to
@@ -434,26 +375,41 @@ def invertMove(move):
 
     return move
 
-""" ************************************************************************* """
+""" ************************************************************************ """
 
-def removeDead(player):
+def remove_dead(player, oppPlayer):
     """
-    Removes dead pieces from the Board
+    Removes dead pieces from the Board (After player moves)
     =====================
     Input Variables:
-        player: the player class
+        player:     the player class
+        oppPlayer:  True if the opponent was the last person to move (ie kill
+                        our pieces first)
     """
-    for piece in player.piece_locations:
-        if checkIfDead(player, piece) == True:
-            player.piece_locations.remove(piece)
-            player.board[piece[COL]][piece[ROW]] = "-"
 
-    for piece in player.opponent_locations:
-        if checkIfDead(player, piece) == True:
-            player.opponent_locations.remove(piece)
-            player.board[piece[COL]][piece[ROW]] = "-"
+    if oppPlayer:
+        locArray1 = player.piece_locations
+        locArray2 = player.opponent_locations
+    else:
+        locArray1 = player.opponent_locations
+        locArray2 = player.piece_locations
 
-""" ************************************************************************* """
+    print(player.colour)
+    print(locArray1)
+    print(locArray2)
+
+    for piece in locArray1:
+        if checkIfDead(player, piece):
+            locArray1.remove(piece)
+            player.board[piece[ROW]][piece[COL]] = "-"
+
+    for piece in locArray2:
+        if checkIfDead(player, piece):
+            locArray2.remove(piece)
+            player.board[piece[ROW]][piece[COL]] = "-"
+
+
+""" ************************************************************************ """
 
 def checkIfDead(player, piece):
     """
@@ -463,31 +419,62 @@ def checkIfDead(player, piece):
     =========================
     Input Variables:
         player: As defined in the specification
-        piece:  The square of the piece being checked (col, row)
+        piece:  The square of the piece being checked (row, col)
     """
-
     board = player.board
-    piece_symb = player.board[piece[COL]][piece[ROW]]
+    piece_symb = player.board[piece[ROW]][piece[COL]]
     KS = "OX" if (piece_symb == "@") else "@X"
 
-    """ Check horizontally """
-    try:
-        if (board[piece[COL]+1][piece[ROW]] in KS) and \
-                (board[piece[COL]-1][piece[ROW]] in KS):
-            print("Killing Piece Horizontally ", piece)
-            return True
-    except IndexError:
-        # Do nothing
-        pass
+    #TODO: Deal with board shrinking
+    BOUND_LOW = 0
+    BOUND_HI = 7
 
-        """ Check Vertically """
-    try:
-        if (board[piece[COL]][piece[ROW]+1] in KS) and \
-                (board[piece[COL]][piece[ROW]-1] in KS):
-            print("Killing Piece Vertically ", piece)
+    """ Check Outside Columns """
+    if (piece[COL] == BOUND_LOW) or (piece[COL] == BOUND_HI):
+        if (board[piece[ROW]+1][piece[COL]] in KS) and \
+                (board[piece[ROW]-1][piece[COL]] in KS):
             return True
-    except IndexError:
-        # Do nothing
-        pass
+
+        """ Check Outside Rows """
+    elif (piece[ROW] == BOUND_LOW) or (piece[ROW] == BOUND_HI):
+        if (board[piece[ROW]][piece[COL]+1] in KS) and \
+                (board[piece[ROW]][piece[COL]-1] in KS):
+            return True
+
+    else:
+        """ Check Vertically """
+        if (board[piece[ROW]+1][piece[COL]] in KS) and \
+                (board[piece[ROW]-1][piece[COL]] in KS):
+            return True
+
+        """ Check Horizontally """
+        if (board[piece[ROW]][piece[COL]+1] in KS) and \
+                (board[piece[ROW]][piece[COL]-1] in KS):
+            return True
 
     return False
+
+""" ************************************************************************ """
+
+def printBoard(player):
+    """
+    Prints the board
+    """
+
+    print("{} Player's Board:".format(player.colour))
+    """ Print the column numbers """
+    print("  ", end='')
+    for i in range(len(player.board)):
+        print("{} ".format(i), end='')
+    print()
+
+    row_count = 0
+    for col in player.board:
+        """ Print the row numbers """
+        print("{} ".format(row_count), end='')
+        row_count += 1
+        """ Print the Squares """
+        for square in col:
+            print("{} ".format(square), end='')
+        print()
+    print("\n")

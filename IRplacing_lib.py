@@ -21,7 +21,7 @@ def placing_phase(self, turns):
     move = random_place()
 
     """ Make a random legal move """
-    while IRplayer.check_legal(self, move, turns) == False:
+    while not IRplayer.check_legal(self, move, turns):
         move = random_place()
 
     return move

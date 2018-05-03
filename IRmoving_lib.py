@@ -45,45 +45,38 @@ def moving_phase(self, turns):
     """
 
     fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
-    legalMoves = getAvailableMoves(self, fromSquare, turns)
+    legal_moves = getAvailableMoves(self, fromSquare, turns)
 
-    while len(legalMoves) == 0:
+    while len(legal_moves) == 0:
         fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
-        legalMoves = getAvailableMoves(self, fromSquare, turns)
+        legal_moves = getAvailableMoves(self, fromSquare, turns)
 
-    toSquare = legalMoves[random.randrange(0, len(legalMoves))]
+    toSquare = legal_moves[random.randrange(0, len(legal_moves))]
 
     return (fromSquare, toSquare)
 
 """ ************************************************************************* """
 
-def moveCalc(fromSquare, direction):
+def getAvailableMoves(player, square, turns):
     """
-    Moves the piece in the specified direction
     Returns:
-        newSquare:  (row, col)
-    ==========================
+        A list of the available moves for the square.
+    ================================
     Input Variables:
-        fromSquare: The square the piece being moved is on, in form (col, row)
-        direction:  The direction to move the piece in, in form (0,1) (For Down)
+        player: The player class
+        square: The piece to check all the moves for
+        turns:  The number of turns that have passed
     """
-    newSquare_row = fromSquare[ROW] + direction[ROW]
-    newSquare_col = fromSquare[COL] + direction[COL]
+    legal_moves = []
+    dirs = [(1,0),(-1,0),(0,1),(0,-1)]
 
-    return (newSquare_row, newSquare_col)
+    for d_row, d_col in dirs:
+        new_row = square[ROW] + d_row
+        new_col = square[COL] + d_col
 
-""" ************************************************************************* """
+        new_move = (new_row, new_col)
 
-def getAvailableMoves(self, square, turns):
-    """
-    Returns a list of the available moves for the square
-    """
-    legalMoves = []
-    buffers = [(1,0),(-1,0),(0,1),(0,-1)]
+        if IRplayer.check_legal(player, new_move, turns):
+            legal_moves.append(new_move)
 
-    for move in buffers:
-        newMove = moveCalc(square, move)
-        if IRplayer.check_legal(self, newMove, turns) == True:
-            legalMoves.append(newMove)
-
-    return legalMoves
+    return legal_moves
