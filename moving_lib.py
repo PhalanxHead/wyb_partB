@@ -14,12 +14,12 @@ from placing_lib import *
 ROW = 0
 COL = 1
 
-class Board_State(board, colour, old_pos, new_pos):
+class Board_State:
   """
   Class that is going to help build our tree for minimax and alpha-beta pruning,
   the class shows all pieces of information relating to that state
   """
-  def __init__(self):
+  def __init__(self, board, colour, old_pos, new_pos):
 
     self.board = board
     self.score = None
@@ -70,7 +70,7 @@ def evaluation_function(state, move):
         score = 5
         dead = True
 
-    kills = check_move_kill(state, move):
+    kills = check_move_kill(state, move)
 
     if kills:
         score = 0
@@ -120,23 +120,23 @@ def minimax(self, turns):
 
     opp_score = min_play(new_state, colour, best_value)
     new_state.score = opps_score
-        """ We need to now somehow determine the scores of each of the moves here,
-        Firstly let's try define some basic score shit lol:
-            - Kill is worth 5
-            - Getting killed is worth 0
-            - Neutral move is worth 2
-        current scoring system is fucking shIT
-        """
+    """ We need to now somehow determine the scores of each of the moves here,
+    Firstly let's try define some basic score shit lol:
+        - Kill is worth 5
+        - Getting killed is worth 0
+        - Neutral move is worth 2
+    current scoring system is fucking shIT
+    """
 
-        if check_self_die(new_state, move[COL]):
-            dead = True
-            score = 0
+    if check_self_die(new_state, move[COL]):
+        dead = True
+        score = 0
 
-        if check_move_kill(new_state, move[COL]):
-            score = 5
+    if check_move_kill(new_state, move[COL]):
+        score = 5
 
-        elif not dead:
-            score = 2
+    elif not dead:
+        score = 2
 
         opp_score = min_play(new_state, colour)
         new_state.score = opps_score
