@@ -13,6 +13,10 @@ from IRmoving_lib import *
 """ Index Specificaions """
 ROW = 0
 COL = 1
+""" Number Definitions """
+SHRINK1 = 128
+SHRINK2 = 192
+
 
 class Player:
 
@@ -58,6 +62,10 @@ class Player:
         if (turns == 0) and (len(self.opponent_locations) != 0):
             self.moving = True
 
+        if (turns == SHRINK1) or (turns == SHRINK1+1):
+            shrink_board(self, 0)
+        elif (turns == SHRINK2) or (turns == SHRINK2+1):
+            shrink_board(self, 1)
 
         if self.moving == True:
             move = IRplayer.moving_phase(self, turns)
@@ -67,8 +75,6 @@ class Player:
 
         """ Invert move to keep with spec """
         move = invert_move(move)
-
-        print(self.colour, " Move: ", move)
 
         Player.update(self, move, False)
 
@@ -160,10 +166,8 @@ def check_legal(player, toPos, turnNum):
     """ Number defs """
     BRD_BOUND_LOW0 = 0
     BRD_BOUND_HIGH0 = 7
-    SHRINK1 = 128
     BRD_BOUND_LOW1 = 1
     BRD_BOUND_HIGH1 = 6
-    SHRINK2 = 192
     BRD_BOUND_LOW2 = 2
     BRD_BOUND_HIGH2 = 5
 
@@ -182,7 +186,7 @@ def check_legal(player, toPos, turnNum):
             return False
 
     # Checks on Smallest Board Size
-    elif turnNum > SHRINK2:
+    elif turnNum >= SHRINK2:
         # Bounds Check
         if (toPos[ROW] > BRD_BOUND_HIGH2 or toPos[ROW] < BRD_BOUND_LOW2) or \
                 (toPos[COL] > BRD_BOUND_HIGH2 or toPos[COL] < BRD_BOUND_LOW2):
@@ -202,7 +206,6 @@ def check_legal(player, toPos, turnNum):
 
     # Thus the move is legal
     return True
-
 
 """ ************************************************************************* """
 
@@ -357,7 +360,6 @@ def check_move_kill(board, new_pos, colour):
 
     return kill_count
 
-
 """ ************************************************************************* """
 
 def invert_move(move):
@@ -394,10 +396,6 @@ def remove_dead(player, oppPlayer):
         locArray1 = player.opponent_locations
         locArray2 = player.piece_locations
 
-    print(player.colour)
-    print(locArray1)
-    print(locArray2)
-
     for piece in locArray1:
         if checkIfDead(player, piece):
             locArray1.remove(piece)
@@ -407,7 +405,6 @@ def remove_dead(player, oppPlayer):
         if checkIfDead(player, piece):
             locArray2.remove(piece)
             player.board[piece[ROW]][piece[COL]] = "-"
-
 
 """ ************************************************************************ """
 
@@ -425,7 +422,6 @@ def checkIfDead(player, piece):
     piece_symb = player.board[piece[ROW]][piece[COL]]
     KS = "OX" if (piece_symb == "@") else "@X"
 
-    #TODO: Deal with board shrinking
     BOUND_LOW = 0
     BOUND_HI = 7
 
@@ -456,6 +452,46 @@ def checkIfDead(player, piece):
 
 """ ************************************************************************ """
 
+def shrink_board(player, s_num):
+    """
+    * Adapted from solution in Referee.py
+
+    Shrinks the board when required.
+    ======================
+    Input Variables:
+        player: The player object
+        s_num:  Starts at 0 for first shrink. Number of shrinks performed so far
+    """
+    board = player.board
+    s = s_num
+
+    # Remove edges
+    for i in range(s, 8 - s):
+        for square in [(i, s), (s, i), (i, 7-s), (7-s, i)]:
+            x, y = square
+            piece = (x,y)
+            if piece in player.piece_locations:
+                player.piece_locations.remove(piece)
+            if piece in player.opponent_locations:
+                player.opponent_locations.remove(piece)
+            board[x][y] = "-"
+
+    s = s + 1
+
+    # replace the corners (and perform corner elimination)
+    for corner in [(s, s), (s, 7-s), (7-s, 7-s), (7-s, s)]:
+        x, y = corner
+        piece = (x,y)
+        if piece in player.piece_locations:
+            player.piece_locations.remove(piece)
+        if piece in player.opponent_locations:
+            player.opponent_locations.remove(piece)
+        board[x][y] = 'X'
+
+    remove_dead(player, False)
+
+""" ************************************************************************ """
+
 def printBoard(player):
     """
     Prints the board
@@ -478,3 +514,5 @@ def printBoard(player):
             print("{} ".format(square), end='')
         print()
     print("\n")
+
+""" ************************************************************************ """
