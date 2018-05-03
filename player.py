@@ -1,5 +1,5 @@
 """****************************************************************************
-* irrationalPlayer/player.py
+* player.py
 * Alistair Moffat Appreciation Society
 * Amy Rieck and Luke Hedt
 * lhedt@student.unimelb.edu.au
