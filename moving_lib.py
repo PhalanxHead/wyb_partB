@@ -120,6 +120,12 @@ def minimax(self, turns):
 
     opp_score = min_play(new_state, colour, best_value)
     new_state.score = opps_score
+<<<<<<< HEAD
+
+        all_states.append(new_state)
+
+  for state in all_states:
+=======
     """ We need to now somehow determine the scores of each of the moves here,
     Firstly let's try define some basic score shit lol:
         - Kill is worth 5
@@ -145,6 +151,7 @@ def minimax(self, turns):
 
 
     for state in all_states:
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
 
         if state.score > best_value:
             best_value = state.score
@@ -152,9 +159,15 @@ def minimax(self, turns):
 
     return best_move_set
 
+<<<<<<< HEAD
+def min_play(state, colour, best_value_found):
+  """ Form the tree for the opponent now """
+
+=======
 
 def min_play(state, colour):
     """ Form the tree for the opponent now """
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
     worst_value = 100
     starting_state = state.board
     available_moves = get_available_moves(starting_state, state.opponent_pieces, turns)
@@ -186,6 +199,8 @@ def min_play(state, colour):
 
         if new_state.score < best_value_found:
             return 0
+<<<<<<< HEAD
+=======
 
     """ Scores are reversed as in terms of our player but this is the enemy player's
     fucntion
@@ -203,6 +218,7 @@ def min_play(state, colour):
 
     elif not dead:
         score = 2
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
 
     next_state.append(new_state)
 
