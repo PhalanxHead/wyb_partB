@@ -7,13 +7,12 @@
 * Date: 2018/04/19
 *
 *****************************************************************************"""
+"""
 from placing_lib import *
 from moving_lib import *
-
-""" Makes random moves instead
+"""
 from IRplacing_lib import *
 from IRmoving_lib import *
-"""
 """ Index Specificaions """
 ROW = 0
 COL = 1

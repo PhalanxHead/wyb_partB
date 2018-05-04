@@ -8,7 +8,7 @@
 *
 * Comments: - Need an update for board when piece dies
 *****************************************************************************"""
-import IRplayer
+import player as pl
 import IRplacing_lib
 import random
 
@@ -76,7 +76,7 @@ def getAvailableMoves(player, square, turns):
 
         new_move = (new_row, new_col)
 
-        if IRplayer.check_legal(player, new_move, turns):
+        if pl.check_legal(player, new_move, turns):
             legal_moves.append(new_move)
 
     return legal_moves

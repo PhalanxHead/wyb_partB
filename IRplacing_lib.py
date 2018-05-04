@@ -8,7 +8,7 @@
 *
 * Comments: - Need an update for board when piece dies
 *****************************************************************************"""
-import IRplayer
+import player
 import random
 
 ROW = 0
@@ -21,7 +21,7 @@ def placing_phase(self, turns):
     move = random_place()
 
     """ Make a random legal move """
-    while not IRplayer.check_legal(self, move, turns):
+    while not player.check_legal(self, move, turns):
         move = random_place()
 
     return move
