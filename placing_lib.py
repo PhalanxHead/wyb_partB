@@ -6,9 +6,13 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
-from player import *
+import player
+import random
+
+ROW = 0
+COL = 1
 
 TURN_BUFFER = 5
 BLACK_STARTING_MOVES = []
@@ -34,7 +38,8 @@ def placing_phase(self, turns):
         else:
             """ Make a random legal move (Just for now) """
             move = random_place()
-
+            while not player.check_legal(self, move, turns):
+                move = random_place()
     else:
         """ Maybe be possible to kill the opponent pieces so we want to make a list
             of all these pieces, at the moment if there are multiple pieces, we will take the first """
@@ -49,7 +54,8 @@ def placing_phase(self, turns):
             """ Also making a random move for now. I think controlling the centre
                 Will give an advantage though """
             move = random_place()
-
+            while not player.check_legal(self, move, turns):
+                move = random_place()
     return move
 
 
@@ -68,22 +74,24 @@ def check_if_take(self, turns):
 
             #add corner solutions
 
-            if (piece[0] + move[0], piece[1] + move[1]) in self.piece_locations:
+            if (piece[ROW] + move[ROW], piece[COL] + move[COL]) in self.piece_locations:
 
                 if move == (1,0):
-                    new_placement = (piece[0] - 1, piece[1])
+                    new_placement = (piece[ROW] - 1, piece[COL])
                 elif move == (-1,0):
-                    new_placement = (piece[0] + 1, piece[1])
+                    new_placement = (piece[ROW] + 1, piece[COL])
                 elif move == (0,1):
-                    new_placement = (piece[0], piece[1] - 1)
+                    new_placement = (piece[ROW], piece[COL] - 1)
                 else:
-                    new_placement = (piece[0], piece[1] + 1)
+                    new_placement = (piece[ROW], piece[COL] + 1)
 
 
-                if check_legal(self.board, new_placement, turns):
+                if player.check_legal(self, new_placement, turns):
                     potential_move.append(new_placement)
 
     return potential_move
+
+"""**************************************************************************"""
 
 def random_place():
     col = random.randint(0,7)

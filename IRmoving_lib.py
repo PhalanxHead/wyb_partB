@@ -6,10 +6,14 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 import IRplayer
 import IRplacing_lib
+import random
+
+ROW = 0
+COL = 1
 
 class Board_State:
     """
@@ -26,32 +30,53 @@ class Board_State:
         self.old_pos = old_pos
         self.new_pos = new_pos
 
+""" ************************************************************************* """
 
 def moving_phase(self, turns):
     """
     Make a random legal move
+    Returns:
+        move: A token move in the form ((fromCol, fromRow),(toCol, toRow))
+    ==============================
+    Input Variables:
+        self:   A Player object as defined by the specification
+        turns:  The number of turns taken (incremented by 1 for each move,
+                ie the second round of moves is turns 3 and 4)
     """
-    move_set = get_available_moves(self.board, self.piece_locations, turns)
 
-    move = move_set(random.randint(len(move_set)))
+    fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
+    legal_moves = getAvailableMoves(self, fromSquare, turns)
 
-    return move
+    while len(legal_moves) == 0:
+        fromSquare = self.piece_locations[random.randrange(0, len(self.piece_locations))]
+        legal_moves = getAvailableMoves(self, fromSquare, turns)
 
-def get_available_moves(board, piece_locations, turns):
+    toSquare = legal_moves[random.randrange(0, len(legal_moves))]
+
+    return (fromSquare, toSquare)
+
+""" ************************************************************************* """
+
+def getAvailableMoves(player, square, turns):
     """
-    Function that produces all available moves for the player. The structure of
-    the output is a list of nested tuples such that we have (old, new) positions.
+    Returns:
+        A list of the available moves for the square.
+    ================================
+    Input Variables:
+        player: The player class
+        square: The piece to check all the moves for
+        turns:  The number of turns that have passed
     """
-    buffers = [(1,0),(-1,0),(0,1),(0,-1)]
-    all_moves = []
+    legal_moves = []
+    dirs = [(1,0),(-1,0),(0,1),(0,-1)]
 
-    for old_pos in self.piece_locations:
+    for d_row, d_col in dirs:
+        new_row = square[ROW] + d_row
+        new_col = square[COL] + d_col
 
-        for move in buffers:
+        new_move = (new_row, new_col)
 
-            new_pos = (old_pos[0] + move[0], old_pos[1] + move[1])
+        if IRplayer.check_legal(player, new_move, turns):
+            legal_moves.append(new_move)
 
-            if check_legal(self.board, new_pos, turns):
-                all_moves.append((old_pos, new_pos))
-
-    return all_moves
+    return legal_moves

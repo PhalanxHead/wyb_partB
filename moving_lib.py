@@ -6,17 +6,20 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
+* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 from player import *
 from placing_lib import *
 
-class Board_State(board, colour, old_pos, new_pos):
+ROW = 0
+COL = 1
+
+class Board_State:
   """
   Class that is going to help build our tree for minimax and alpha-beta pruning,
   the class shows all pieces of information relating to that state
   """
-  def __init__(self):
+  def __init__(self, board, colour, old_pos, new_pos):
 
     self.board = board
     self.score = None
@@ -48,7 +51,7 @@ def get_available_moves(board, piece_locations, turns):
 
     for move in buffers:
 
-      new_pos = (old_pos[0] + move[0], old_pos[1] + move[1])
+      new_pos = (old_pos[ROW] + move[ROW], old_pos[COL] + move[COL])
 
       if check_legal(self.board, new_pos, turns):
         all_moves.append((old_pos, new_pos))
@@ -67,7 +70,7 @@ def evaluation_function(state, move):
         score = 5
         dead = True
 
-    kills = check_move_kill(state, move):
+    kills = check_move_kill(state, move)
 
     if kills:
         score = 0
@@ -98,29 +101,57 @@ def minimax(self, turns):
         dead = False
 
         new_board = self.board
-        new_board[move[0][0]][move[0][1]] = ""
+        new_board[move[ROW][ROW]][move[ROW][COL]] = ""
 
         if self.colour == "black":
-            new_board[move[1][0]][move[0][1]] = "@"
+            new_board[move[COL][ROW]][move[ROW][COL]] = "@"
         else:
-            new_board[move[1][0]][move[1][1]] = "O"
+            new_board[move[COL][ROW]][move[COL][COL]] = "O"
 
-        new_state = Board_State(new_board, self.colour, move[0], move[1])
+        new_state = Board_State(new_board, self.colour, move[ROW], move[COL])
         new_state.opponent_pieces = self.opponent_pieces
         new_state.piece_locations = self.piece_locations
 
-        new_state.piece_locations.remove(move[0])
-        new_state.piece_locations.append(move[1])
+        new_state.piece_locations.remove(move[ROW])
+        new_state.piece_locations.append(move[COL])
 
     if best_value == -1:
         best_value = min_play(new_state, colour, -1)
 
     opp_score = min_play(new_state, colour, best_value)
     new_state.score = opps_score
+<<<<<<< HEAD
 
         all_states.append(new_state)
 
   for state in all_states:
+=======
+    """ We need to now somehow determine the scores of each of the moves here,
+    Firstly let's try define some basic score shit lol:
+        - Kill is worth 5
+        - Getting killed is worth 0
+        - Neutral move is worth 2
+    current scoring system is fucking shIT
+    """
+
+    if check_self_die(new_state, move[COL]):
+        dead = True
+        score = 0
+
+    if check_move_kill(new_state, move[COL]):
+        score = 5
+
+    elif not dead:
+        score = 2
+
+        opp_score = min_play(new_state, colour)
+        new_state.score = opps_score
+
+        all_states.append(new_state)
+
+
+    for state in all_states:
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
 
         if state.score > best_value:
             best_value = state.score
@@ -128,9 +159,15 @@ def minimax(self, turns):
 
     return best_move_set
 
+<<<<<<< HEAD
 def min_play(state, colour, best_value_found):
   """ Form the tree for the opponent now """
 
+=======
+
+def min_play(state, colour):
+    """ Form the tree for the opponent now """
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
     worst_value = 100
     starting_state = state.board
     available_moves = get_available_moves(starting_state, state.opponent_pieces, turns)
@@ -141,19 +178,19 @@ def min_play(state, colour, best_value_found):
         dead = False
 
     new_board = starting_state
-    new_board[move[0][0]][move[0][1]] = ""
+    new_board[move[ROW][ROW]][move[ROW][COL]] = ""
 
     if colour == "black":
-        new_board[move[1][0]][move[0][1]] = "O"
+        new_board[move[COL][ROW]][move[ROW][COL]] = "O"
     else:
-        new_board[move[1][0]][move[1][1]] = "@"
+        new_board[move[COL][ROW]][move[COL][COL]] = "@"
 
-    new_state = Board_State(new_board, colour, move[0], move[1])
+    new_state = Board_State(new_board, colour, move[ROW], move[COL])
     new_state.opponent_pieces = state.piece_locations
     new_state.piece_locations = state.opponent_pieces
 
-    new_state.piece_locations.remove(move[0])
-    new_state.piece_locations.append(move[1])
+    new_state.piece_locations.remove(move[ROW])
+    new_state.piece_locations.append(move[COL])
 
     new_state.score = evaluation_function(new_state, move[1])
 
@@ -162,6 +199,26 @@ def min_play(state, colour, best_value_found):
 
         if new_state.score < best_value_found:
             return 0
+<<<<<<< HEAD
+=======
+
+    """ Scores are reversed as in terms of our player but this is the enemy player's
+    fucntion
+        - Kill is worth 0
+        - Getting killed is worth 5
+        - Neutral move is worth 2
+    """
+
+    if check_self_die(new_state, move[COL]):
+        dead = True
+        score = 5
+
+    if check_move_kill(new_state, move[COL]):
+        score = 5
+
+    elif not dead:
+        score = 2
+>>>>>>> ed962d451478b55cdea476f0eb2662b801332694
 
     next_state.append(new_state)
 
@@ -169,56 +226,3 @@ def min_play(state, colour, best_value_found):
         worst_value = new_state.score
 
     return worst_value
-
-"""
-# Very Basic Untailored Minimax Implementation
-# From http://giocc.com/concise-implementation-of-minimax-through-higher-order-functions.html
-def minimax(game_state):
-    moves = game_state.get_available_moves()
-    best_move = moves[0]
-    best_score = float('-inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = min_play(clone)
-
-        if score > best_score:
-            best_move = move
-            best_score = score
-
-  return best_move
-
-def min_play(game_state):
-    if game_state.is_gameover():
-        return evaluate(game_state)
-
-    moves = game_state.get_available_moves()
-    best_score = float('inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = max_play(clone)
-
-        if score < best_score:
-            best_move = move
-        best_score = score
-
-  return best_score
-
-def max_play(game_state):
-    if game_state.is_gameover():
-        return evaluate(game_state)
-
-  moves = game_state.get_available_moves()
-  best_score = float('-inf')
-
-    for move in moves:
-        clone = game_state.next_state(move)
-        score = min_play(clone)
-
-    if score > best_score:
-      best_move = move
-      best_score = score
-
-  return best_score
-"""

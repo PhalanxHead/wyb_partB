@@ -6,93 +6,135 @@
 *
 * Date: 2018/04/19
 *
-* Comments: It Begins
 *****************************************************************************"""
 from placing_lib import *
 from moving_lib import *
 
-class player:
+""" Makes random moves instead
+from IRplacing_lib import *
+from IRmoving_lib import *
+"""
+""" Index Specificaions """
+ROW = 0
+COL = 1
+""" Number Definitions """
+SHRINK1 = 128
+SHRINK2 = 192
+
+
+class Player:
+
     def __init__(self, colour):
-        # Stuff
         """
-        This method is called by the referee once at the beginning of the game to initialise
-        our player. You should use this opportunity to set up your own internal
-        representation of the board, and any other state you would like to maintain for the
-        duration of the game.
-        The input parameter colour is a string representing the piece colour your program
-        will control for this game. It can take one of only two values: the string 'white' (if
-        you are the White player for this game) or the string 'black' (if you are the Black
-        player for this game).
+        Called once by the referee to initialise the player. The player builds its
+        own board and location representations.
+        ============================
+        Input Variables:
+            self:   Player class as defined in specification
+            colour: The player's colour.
         """
 
         self.colour = colour
+        """ Reference as (row, col) """
         self.board = []
         self.piece_locations = []
         self.opponent_locations = []
+        self.moving = False
 
         for i in range(8):
             if (i == 0) or (i == 7):
-                self.board.append(['X','','','','','','','X'])
+                self.board.append(['X','-','-','-','-','-','-','X'])
 
             else:
-                self.board.append(['','','','','','','',''])
+                self.board.append(['-','-','-','-','-','-','-','-'])
 
     #**************************************************************************
 
     def action(self, turns):
-        # Stuff
         """
-        This method is called by the referee to request an action by your player.
-        The input parameter turns is an integer representing the number of turns that have
-        taken place since the start of the current game phase. For example, if White player
-        has already made 10 moves in the moving phase, and Black player has made 10
-        moves (and the referee is asking for its 11 th move), then the value of turns would
-        be 21.
-        Based on the current state of the board, your player should select its next action
-        and return it. Your player should represent this action based on the instructions
-        below, in the ‘Representing actions’ section.
-        """
-        """
-        From spec:
-        Representing actions
-            Depending on the current game phase, the actions either player may take on their turn
-            may involve placing a piece on a square, moving a piece from one square to another
-            or forfeiting their turn. For the purposes of the update() and action()
-            methods, we represent each of these actions as follows:
-                • To represent the action of placing a piece on square (x,y), use a tuple (x,y).
-                • To represent the action of moving a piece from square (a,b) to square (c,d), use
-                    a nested tuple ((a,b),(c,d)).
-                • To represent a forfeited turn, use the value None.
+        Called by referee to request an action from the player.
+        Returns:
+            move:   Either (col, row) or ((fromCol, fromRow), (toCol, toRow))
+        ============================
+        Input Variables:
+            self:   A Player class as defined in the specification
+            turns:  The number of turns taken (incremented by 1 for each move,
+                    ie the second round of moves is turns 3 and 4)
         """
 
-        if turns >= 24:
-            return moving_phase(self, turns)
+        """ Check that we haven't entered the moving phase """
+        if (turns == 0) and (len(self.opponent_locations) != 0):
+            self.moving = True
+
+        if (turns == SHRINK1) or (turns == SHRINK1+1):
+            shrink_board(self, 0)
+        elif (turns == SHRINK2) or (turns == SHRINK2+1):
+            shrink_board(self, 1)
+
+        if self.moving == True:
+            move = moving_phase(self, turns)
 
         else:
-            return placing_phase(self, turns)
+            move = placing_phase(self, turns)
+
+        """ Invert move to keep with spec """
+        move = invert_move(move)
+
+        Player.update(self, move, False)
+
+        return move
 
 
     #***************************************************************************
 
-    def update(self, action):
-        # Stuff
+    def update(self, action, oppPlayer=True):
         """
-        This method is called by the referee to inform your player about the opponent’s
-        most recent move, so that you can maintain your internal board configuration.
-        The input parameter action is a representation of the opponent’s recent action
-        based on the instructions below, in the ‘Representing actions’ section.
-        This method should not return anything.
-        Note: update() is only called to notify your player about the opponent’s actions.
-        Your player will not be notified about its own actions.
+        Called by referee to update your agent of the opponent's actions.
+        ==============================
+        Input Variables:
+            self:   A Player object as defined by the specification
+            action: A token move as defined in the specification:
+                    Either (col, row) or ((fromCol, fromRow),(toCol, toRow))
+            oppPlayer:  True if the move is coming from the opposing player
+                        (ie if called by the referee)
         """
 
-        if self.colour == "black":
-            self.board[action[1], action[0]] = "O"
+        """ Skipped move case """
+        if action == None:
+            return
+
+        """ Be consistent with board layout """
+        action = invert_move(action)
+
+        """ Distinguish a placing from a moving """
+        if isinstance(action[0], tuple):
+            self.moving = True
+            fromSquare = action[0]
+            toSquare = action[1]
+        else:
+            toSquare = action
+
+            """ Check if updating move from the opponent or yourself """
+        if oppPlayer:
+            """ Select appropriate piece to place """
+            placingPiece = "O" if (self.colour == "black") else "@"
+            locArray = self.opponent_locations
 
         else:
-            self.board[action[1], action[0]] = "@"
+            placingPiece = "@" if (self.colour == "black") else "O"
+            locArray = self.piece_locations
 
-        self.opponent_locations.append(action)
+        self.board[toSquare[ROW]][toSquare[COL]] = placingPiece
+        locArray.append(toSquare)
+
+
+        """ Remove piece from old location (if applicable) """
+        if self.moving == True:
+            self.board[fromSquare[ROW]][fromSquare[COL]] = "-"
+            locArray.remove(fromSquare)
+
+        remove_dead(self, oppPlayer)
+
 
 
 """ ************************************************************************* """
@@ -112,6 +154,7 @@ def check_legal(player, toPos, turnNum):
 
     board = player.board
 
+    """ Boundary Definitions (For placing phase) """
     if player.colour == "white":
         MAX_ROW = 5
         MAX_COL = 7
@@ -124,58 +167,49 @@ def check_legal(player, toPos, turnNum):
         MIN_ROW = 2
         MIN_COL = 0
 
-    # Number defs
-    ROW_IDX = 0
-    COL_IDX = 1
-    PLACING = 24
-    SHRINK1 = 128
+    """ Number defs """
+    BRD_BOUND_LOW0 = 0
+    BRD_BOUND_HIGH0 = 7
     BRD_BOUND_LOW1 = 1
     BRD_BOUND_HIGH1 = 6
-    SHRINK2 = 192
     BRD_BOUND_LOW2 = 2
     BRD_BOUND_HIGH2 = 5
 
     # Placing Phase Checks
-    if turnNum < PLACING:
+    if player.moving == False:
         # Bounds Check
-        #Check Row
-        if (toPos[ROW_IDX] > MAX_ROW or toPos[ROW_IDX] < MIN_ROW):
+        if (toPos[ROW] > MAX_ROW or toPos[ROW] < MIN_ROW) or \
+                (toPos[COL] > MAX_COL or toPos[COL] < MIN_COL):
             return False
 
-            # Check Col
-        if (toPos[COL_IDX] > MAX_COL or toPos[COL_IDX] < MIN_COL):
-            return False
-
-            # Checks on Smallest Board Size
-    elif turnNum > SHRINK2:
+    # Check largest board size
+    elif turnNum < SHRINK1:
         # Bounds Check
-        # Check Row
-        if (toPos[ROW_IDX] > BRD_BOUND_HIGH2 or toPos[ROW_IDX] < BRD_BOUND_LOW2):
+        if (toPos[ROW] > BRD_BOUND_HIGH0 or toPos[ROW] < BRD_BOUND_LOW0) or \
+                (toPos[COL] > BRD_BOUND_HIGH0 or toPos[COL] < BRD_BOUND_LOW0):
             return False
 
-            # Check Col
-        if (toPos[COL_IDX] > BRD_BOUND_HIGH2 or toPos[COL_IDX] < BRD_BOUND_LOW2):
-            return False
-
-            # Check on first shrink size
-    elif turnNum > SHRINK1:
+    # Checks on Smallest Board Size
+    elif turnNum >= SHRINK2:
         # Bounds Check
-        # Check Row
-        if (toPos[ROW_IDX] > BRD_BOUND_HIGH1 or toPos[ROW_IDX] < BRD_BOUND_LOW1):
+        if (toPos[ROW] > BRD_BOUND_HIGH2 or toPos[ROW] < BRD_BOUND_LOW2) or \
+                (toPos[COL] > BRD_BOUND_HIGH2 or toPos[COL] < BRD_BOUND_LOW2):
             return False
 
-            # Check Col
-        if (toPos[COL_IDX] > BRD_BOUND_HIGH1 or toPos[COL_IDX] < BRD_BOUND_LOW1):
+    # Check on first shrink size
+    else:
+        # Bounds Check
+        if (toPos[ROW] > BRD_BOUND_HIGH1 or toPos[ROW] < BRD_BOUND_LOW1) or \
+                (toPos[COL] > BRD_BOUND_HIGH1 or toPos[COL] < BRD_BOUND_LOW1):
             return False
 
-        # Check the piece isn't moving into an illegal piece
-        # TODO: Check Jump as well
-    if (board[toPos[ROW_IDX]][toPos[COL_IDX]] != ""):
+    """ Check the piece isn't moving into an illegal place """
+    # TODO: Check Jump as well
+    if (board[toPos[ROW]][toPos[COL]] != "-"):
         return False
 
-        # Thus the move is legal
+    # Thus the move is legal
     return True
-
 
 """ ************************************************************************* """
 
@@ -190,8 +224,8 @@ def check_self_die(state, new_pos):
         state:      The Board Array as defined above
         new_pos:    The position white is trying to move to.
     """
-    piece_i = new_pos[0]
-    piece_j = new_pos[1]
+    piece_i = new_pos[ROW]
+    piece_j = new_pos[COL]
 
     if piece_i == 0 or piece_i == 7:
         if ((state[piece_i][piece_j + 1] == "@") and (state[piece_i][piece_j - 1] == "@")) \
@@ -309,23 +343,180 @@ def check_move_kill(board, new_pos, colour):
 
     for move in bufferss:
 
-        pos_x = new_pos[0] + move[0]
-        pos_y = new_pos[1] + move[1]
+        pos_x = new_pos[ROW] + move[ROW]
+        pos_y = new_pos[COL] + move[COL]
 
-        pos_2x = new_pos[0] + 2*move[0]
-        pos_2y = new_pos[1] + 2*move[1]
+        pos_2x = new_pos[ROW] + 2*move[ROW]
+        pos_2y = new_pos[COL] + 2*move[COL]
 
 
-    if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
+        if (pos_x >= 0 and pos_y >= 0) and (pos_2x >= 0 and pos_2y >= 0):
 
-        try:
-            piece_e = board[pos_x][pos_y]
-            piece_s = board[pos_2x][pos_2y]
+            try:
+                piece_e = board[pos_x][pos_y]
+                piece_s = board[pos_2x][pos_2y]
 
-            if ((piece_e == ene) and (piece_s == symb or piece_s == "X")):
-                kill_count += 1
+                if piece_e == ene and (piece_s == symb or piece_s == "X"):
+                    kill_count += 1
 
-        except (IndexError, ValueError):
-            pass
+            except (IndexError, ValueError):
+                pass
 
     return kill_count
+
+""" ************************************************************************* """
+
+def invert_move(move):
+    """
+    Inverts a move from (row, col) to (col, row) (or Vice Versa)
+    Or from ((fromCol, fromRow), (toCOl, toRow)) to
+    ((fromRow, fromCol), (toRow, toCol))  (or Vice Versa)
+    """
+    if isinstance(move[0], tuple):
+        fromSquare = move[0][::-1]
+        toSquare = move[1][::-1]
+        move = (fromSquare, toSquare)
+    else:
+        move = move[::-1]
+
+    return move
+
+""" ************************************************************************ """
+
+def remove_dead(player, oppPlayer):
+    """
+    Removes dead pieces from the Board (After player moves)
+    =====================
+    Input Variables:
+        player:     the player class
+        oppPlayer:  True if the opponent was the last person to move (ie kill
+                        our pieces first)
+    """
+
+    if oppPlayer:
+        locArray1 = player.piece_locations
+        locArray2 = player.opponent_locations
+    else:
+        locArray1 = player.opponent_locations
+        locArray2 = player.piece_locations
+
+    for piece in locArray1:
+        if checkIfDead(player, piece):
+            locArray1.remove(piece)
+            player.board[piece[ROW]][piece[COL]] = "-"
+
+    for piece in locArray2:
+        if checkIfDead(player, piece):
+            locArray2.remove(piece)
+            player.board[piece[ROW]][piece[COL]] = "-"
+
+""" ************************************************************************ """
+
+def checkIfDead(player, piece):
+    """
+    Checks if a piece is dead or not.
+    Returns:
+        True if piece is dead
+    =========================
+    Input Variables:
+        player: As defined in the specification
+        piece:  The square of the piece being checked (row, col)
+    """
+    board = player.board
+    piece_symb = player.board[piece[ROW]][piece[COL]]
+    KS = "OX" if (piece_symb == "@") else "@X"
+
+    BOUND_LOW = 0
+    BOUND_HI = 7
+
+    """ Check Outside Columns """
+    if (piece[COL] == BOUND_LOW) or (piece[COL] == BOUND_HI):
+        if (board[piece[ROW]+1][piece[COL]] in KS) and \
+                (board[piece[ROW]-1][piece[COL]] in KS):
+            return True
+
+        """ Check Outside Rows """
+    elif (piece[ROW] == BOUND_LOW) or (piece[ROW] == BOUND_HI):
+        if (board[piece[ROW]][piece[COL]+1] in KS) and \
+                (board[piece[ROW]][piece[COL]-1] in KS):
+            return True
+
+    else:
+        """ Check Vertically """
+        if (board[piece[ROW]+1][piece[COL]] in KS) and \
+                (board[piece[ROW]-1][piece[COL]] in KS):
+            return True
+
+        """ Check Horizontally """
+        if (board[piece[ROW]][piece[COL]+1] in KS) and \
+                (board[piece[ROW]][piece[COL]-1] in KS):
+            return True
+
+    return False
+
+""" ************************************************************************ """
+
+def shrink_board(player, s_num):
+    """
+    * Adapted from solution in Referee.py
+
+    Shrinks the board when required.
+    ======================
+    Input Variables:
+        player: The player object
+        s_num:  Starts at 0 for first shrink. Number of shrinks performed so far
+    """
+    board = player.board
+    s = s_num
+
+    # Remove edges
+    for i in range(s, 8 - s):
+        for square in [(i, s), (s, i), (i, 7-s), (7-s, i)]:
+            x, y = square
+            piece = (x,y)
+            if piece in player.piece_locations:
+                player.piece_locations.remove(piece)
+            if piece in player.opponent_locations:
+                player.opponent_locations.remove(piece)
+            board[x][y] = "-"
+
+    s = s + 1
+
+    # replace the corners (and perform corner elimination)
+    for corner in [(s, s), (s, 7-s), (7-s, 7-s), (7-s, s)]:
+        x, y = corner
+        piece = (x,y)
+        if piece in player.piece_locations:
+            player.piece_locations.remove(piece)
+        if piece in player.opponent_locations:
+            player.opponent_locations.remove(piece)
+        board[x][y] = 'X'
+
+    remove_dead(player, False)
+
+""" ************************************************************************ """
+
+def printBoard(player):
+    """
+    Prints the board
+    """
+
+    print("{} Player's Board:".format(player.colour))
+    """ Print the column numbers """
+    print("  ", end='')
+    for i in range(len(player.board)):
+        print("{} ".format(i), end='')
+    print()
+
+    row_count = 0
+    for col in player.board:
+        """ Print the row numbers """
+        print("{} ".format(row_count), end='')
+        row_count += 1
+        """ Print the Squares """
+        for square in col:
+            print("{} ".format(square), end='')
+        print()
+    print("\n")
+
+""" ************************************************************************ """
