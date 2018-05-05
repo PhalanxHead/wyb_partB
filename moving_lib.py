@@ -123,11 +123,8 @@ def minimax(self, turns):
             new_board[move[MOVETO][ROW]][move[MOVETO][COL]] = "O"
 
         new_state = Board_State(new_board, self.colour, move[MOVEFROM], move[MOVETO])
-        new_state.opponent_locations = self.opponent_locations
-        new_state.piece_locations = self.piece_locations
-
-        print(new_state.piece_locations)
-        print(move[MOVEFROM])
+        new_state.opponent_locations = self.opponent_locations[:]
+        new_state.piece_locations = self.piece_locations[:]
 
         new_state.piece_locations.remove(move[MOVEFROM])
         new_state.piece_locations.append(move[MOVETO])
@@ -135,8 +132,8 @@ def minimax(self, turns):
         if best_value == -1:
             best_value = min_play(new_state, self.colour, -1, turns)
 
-        opp_score = min_play(new_state, self.colour, best_value)
-        new_state.score = opps_score
+        opp_score = min_play(new_state, self.colour, best_value, turns)
+        new_state.score = opp_score
 
         all_states.append(new_state)
 
@@ -174,11 +171,8 @@ def min_play(state, colour, best_value_found, turns):
             new_board[move[MOVETO][ROW]][move[MOVETO][COL]] = "@"
 
         new_state = Board_State(new_board, colour, move[MOVEFROM], move[MOVETO])
-        new_state.opponent_locations = state.opponent_locations
-        new_state.piece_locations = state.piece_locations
-
-        print(new_state.piece_locations)
-        print(move[MOVEFROM])
+        new_state.opponent_locations = state.opponent_locations[:]
+        new_state.piece_locations = state.piece_locations[:]
 
         new_state.piece_locations.remove(move[MOVEFROM])
         new_state.piece_locations.append(move[MOVETO])
@@ -190,8 +184,6 @@ def min_play(state, colour, best_value_found, turns):
 
             if new_state.score < best_value_found:
                 return 0
-
-        next_state.append(new_state) ## What?? (Amy: we might not even need to keep this state)
 
         if new_state.score <= worst_value:
             worst_value = new_state.score

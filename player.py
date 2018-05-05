@@ -373,7 +373,7 @@ def check_move_kill(player, new_pos, colour):
                 piece_e = board[pos_x][pos_y]
                 piece_s = board[pos_2x][pos_2y]
 
-                if piece_e == ene and (piece_s == symb or piece_s == "X"):
+                if piece_e == ene and (piece_s == sym or piece_s == "X"):
                     kill_count += 1
 
             except (IndexError, ValueError):
