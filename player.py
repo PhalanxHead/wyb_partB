@@ -7,12 +7,15 @@
 * Date: 2018/04/19
 *
 *****************************************************************************"""
-"""
+
 from placing_lib import *
 from moving_lib import *
+
 """
 from IRplacing_lib import *
 from IRmoving_lib import *
+"""
+
 """ Index Specificaions """
 ROW = 0
 COL = 1
@@ -39,6 +42,7 @@ class Player:
         self.piece_locations = []
         self.opponent_locations = []
         self.moving = False
+        self.moves = 0
 
         for i in range(8):
             if (i == 0) or (i == 7):
@@ -62,12 +66,15 @@ class Player:
         """
 
         """ Check that we haven't entered the moving phase """
-        if (turns == 0) and (len(self.opponent_locations) != 0):
+        if (turns == 0 or turns == 1) and (len(self.piece_locations) != 0):
             self.moving = True
+            self.moves = 0
 
-        if (turns == SHRINK1) or (turns == SHRINK1+1):
+        if self.moves == SHRINK1:
+            print("SHRINKING")
             shrink_board(self, 0)
-        elif (turns == SHRINK2) or (turns == SHRINK2+1):
+        elif self.moves == SHRINK2:
+            print("SHRINKING")
             shrink_board(self, 1)
 
         if self.moving == True:
@@ -80,6 +87,8 @@ class Player:
         move = invert_move(move)
 
         Player.update(self, move, False)
+
+        print_board(self)
 
         return move
 
@@ -129,8 +138,13 @@ class Player:
 
         """ Remove piece from old location (if applicable) """
         if self.moving == True:
-            self.board[fromSquare[ROW]][fromSquare[COL]] = "-"
-            locArray.remove(fromSquare)
+            try:
+                self.board[fromSquare[ROW]][fromSquare[COL]] = "-"
+                locArray.remove(fromSquare)
+            except:
+                pass
+
+        self.moves += 1
 
         remove_dead(self, oppPlayer)
 
@@ -212,7 +226,7 @@ def check_legal(player, toPos, turnNum):
 
 """ ************************************************************************* """
 
-def check_self_die(state, new_pos):
+def check_self_die(player, new_pos):
     """
     *** Lifted from Part A Solution
 
@@ -223,6 +237,7 @@ def check_self_die(state, new_pos):
         state:      The Board Array as defined above
         new_pos:    The position white is trying to move to.
     """
+    state = player.board
     piece_i = new_pos[ROW]
     piece_j = new_pos[COL]
 
@@ -326,10 +341,13 @@ def check_self_die(state, new_pos):
 
 """ ************************************************************************* """
 
-def check_move_kill(board, new_pos, colour):
+def check_move_kill(player, new_pos, colour):
     """
     Alright, let's do some kill confirmed kind of shit now
     """
+
+    board = player.board
+
     buffers = [(1,0), (-1,0), (0,1),(0,-1)]
     kill_count = 0
 
@@ -340,7 +358,7 @@ def check_move_kill(board, new_pos, colour):
         sym = "O"
         ene = "@"
 
-    for move in bufferss:
+    for move in buffers:
 
         pos_x = new_pos[ROW] + move[ROW]
         pos_y = new_pos[COL] + move[COL]
@@ -400,18 +418,18 @@ def remove_dead(player, oppPlayer):
         locArray2 = player.piece_locations
 
     for piece in locArray1:
-        if checkIfDead(player, piece):
+        if check_if_dead(player, piece):
             locArray1.remove(piece)
             player.board[piece[ROW]][piece[COL]] = "-"
 
     for piece in locArray2:
-        if checkIfDead(player, piece):
+        if check_if_dead(player, piece):
             locArray2.remove(piece)
             player.board[piece[ROW]][piece[COL]] = "-"
 
 """ ************************************************************************ """
 
-def checkIfDead(player, piece):
+def check_if_dead(player, piece):
     """
     Checks if a piece is dead or not.
     Returns:
@@ -495,7 +513,7 @@ def shrink_board(player, s_num):
 
 """ ************************************************************************ """
 
-def printBoard(player):
+def print_board(player):
     """
     Prints the board
     """
