@@ -94,7 +94,10 @@ def evaluation_function(state, move):
 """ Attempt at a minimax implementation """
 def minimax(self, turns):
     """
-    minimax boi
+    This works as the max part of our minimax/alpha-beta pruning, what happens
+    here is we start to evaluate every potential move and then we check how our
+    opponent would react to it and choose the tree branch with the highest evaluation
+    score out of all the minimums
     """
     best_value = -1
     best_move_set = None
@@ -148,7 +151,10 @@ def minimax(self, turns):
 """ ************************************************************************ """
 
 def min_play(state, colour, best_value_found, turns):
-    """ Form the tree for the opponent now """
+    """ Min play we try to determine what the worst play would be for our piece
+        from our opponent's perspective, and if we find a lower score than previously
+        found we immediately exit out of the function as we shouldn't play
+        the move being evaluated in max"""
 
     worst_value = 100
     starting_state = state.board
@@ -185,7 +191,7 @@ def min_play(state, colour, best_value_found, turns):
             if new_state.score < best_value_found:
                 return 0
 
-        next_state.append(new_state) ## What??
+        next_state.append(new_state) ## What?? (Amy: we might not even need to keep this state)
 
         if new_state.score <= worst_value:
             worst_value = new_state.score
