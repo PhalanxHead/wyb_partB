@@ -139,32 +139,6 @@ def minimax(self, turns):
 
         for state in all_states:
 
-            """ We need to now somehow determine the scores of each of the moves here,
-            Firstly let's try define some basic score shit lol:
-                - Kill is worth 5
-                - Getting killed is worth 0
-                - Neutral move is worth 2
-            current scoring system is fucking shIT
-            """
-
-            if pl.check_self_die(new_state, move[MOVETO]):
-                dead = True
-                score = 0
-
-            if pl.check_move_kill(new_state, move[MOVETO], new_state.colour):
-                score = 5
-
-            elif not dead:
-                score = 2
-
-                opp_score = min_play(new_state, colour, turns)
-                new_state.score = opps_score
-
-                all_states.append(new_state)
-
-
-        for state in all_states:
-
             if state.score > best_value:
                 best_value = state.score
                 best_move_set = (state.old_pos, state.new_pos)
@@ -210,23 +184,6 @@ def min_play(state, colour, best_value_found, turns):
 
             if new_state.score < best_value_found:
                 return 0
-
-        """ Scores are reversed as in terms of our player but this is the enemy player's
-        fucntion
-            - Kill is worth 0
-            - Getting killed is worth 5
-            - Neutral move is worth 2
-        """
-
-        if pl.check_self_die(new_state, move[MOVETO]):
-            dead = True
-            score = 5
-
-        if pl.check_move_kill(new_state, move[MOVETO], new_state.colour):
-            score = 5
-
-        elif not dead:
-            score = 2
 
         next_state.append(new_state) ## What??
 
