@@ -18,6 +18,9 @@ TURN_BUFFER = 5
 BLACK_STARTING_MOVES = []
 WHITE_STARTING_MOVES = []
 
+
+""" ************************************************************************ """
+
 def placing_phase(self, turns):
     """
     Function that determines what the agent should play in the placing phase of the game.
@@ -58,6 +61,7 @@ def placing_phase(self, turns):
                 move = random_place()
     return move
 
+""" ************************************************************************ """
 
 def check_if_take(self, turns):
     """

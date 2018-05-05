@@ -102,7 +102,7 @@ def minimax(self, turns):
     best_value = -1
     best_move_set = None
 
-    starting_state = self.board
+    starting_state = self.board[:]
     available_moves = get_available_moves(self, turns)
 
     all_states = []
@@ -114,7 +114,7 @@ def minimax(self, turns):
     for move in available_moves:
         dead = False
 
-        new_board = self.board
+        new_board = self.board[:]
         new_board[move[MOVEFROM][ROW]][move[MOVETO][COL]] = "-"
 
         if self.colour == "black":
@@ -139,7 +139,7 @@ def minimax(self, turns):
 
         for state in all_states:
 
-            if state.score > best_value:
+            if state.score >= best_value:
                 best_value = state.score
                 best_move_set = (state.old_pos, state.new_pos)
 
@@ -154,7 +154,7 @@ def min_play(state, colour, best_value_found, turns):
         the move being evaluated in max"""
 
     worst_value = 100
-    starting_state = state.board
+    starting_state = state.board[:]
     available_moves = get_available_moves(state, turns)
 
     opponents_states = []
