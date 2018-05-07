@@ -88,8 +88,6 @@ class Player:
 
         Player.update(self, move, False)
 
-        print_board(self)
-
         return move
 
 

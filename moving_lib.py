@@ -23,7 +23,7 @@ class Board_State:
   """
   def __init__(self, board, colour, old_pos, new_pos):
 
-    self.board = board
+    self.board = cpy(board)
     self.score = None
     self.colour = colour
     self.opponent_locations = None
@@ -102,7 +102,7 @@ def minimax(self, turns):
     best_value = -1
     best_move_set = None
 
-    starting_state = self.board[:]
+    starting_state = cpy(self.board)
     available_moves = get_available_moves(self, turns)
 
     all_states = []
@@ -114,7 +114,7 @@ def minimax(self, turns):
     for move in available_moves:
         dead = False
 
-        new_board = self.board[:]
+        new_board = cpy(self.board)
         new_board[move[MOVEFROM][ROW]][move[MOVETO][COL]] = "-"
 
         if self.colour == "black":
@@ -154,7 +154,7 @@ def min_play(state, colour, best_value_found, turns):
         the move being evaluated in max"""
 
     worst_value = 100
-    starting_state = state.board[:]
+    starting_state = cpy(state.board)
     available_moves = get_available_moves(state, turns)
 
     opponents_states = []
@@ -162,7 +162,7 @@ def min_play(state, colour, best_value_found, turns):
     for move in available_moves:
         dead = False
 
-        new_board = starting_state
+        new_board = cpy(starting_state)
         new_board[move[MOVEFROM][ROW]][move[MOVEFROM][COL]] = "-"
 
         if colour == "black":
@@ -191,3 +191,9 @@ def min_play(state, colour, best_value_found, turns):
     return worst_value
 
 """ ************************************************************************ """
+
+def cpy(board):
+    """
+    Makes a copy of the board (rather than referencing)
+    """
+    return [row[:] for row in board]

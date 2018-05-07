@@ -8,15 +8,15 @@
 *
 * Comments: - Need an update for board when piece dies
 *****************************************************************************"""
-import player
+import player as pl
 import random
 
 ROW = 0
 COL = 1
 
 TURN_BUFFER = 5
-BLACK_STARTING_MOVES = []
-WHITE_STARTING_MOVES = []
+BLACK_STARTING_MOVES = [(4,4), (3,3), (3,4),(4,3)]
+WHITE_STARTING_MOVES = [(4,4), (3,3), (3,4),(4,3)]
 
 
 """ ************************************************************************ """
@@ -30,10 +30,10 @@ def placing_phase(self, turns):
         """ Choose some initial best moves, here we need to develop a profile of good moves """
 
         if self.colour == "black":
-            legal_starting = [starting for starting in BLACK_STARTING_MOVES if check_legal(self.board, starting, turns)]
+            legal_starting = [starting for starting in BLACK_STARTING_MOVES if pl.check_legal(self, starting, turns)]
 
         else:
-            legal_starting = [starting for starting in WHITE_STARTING_MOVES if check_legal(self.board, starting, turns)]
+            legal_starting = [starting for starting in WHITE_STARTING_MOVES if pl.check_legal(self, starting, turns)]
 
         if legal_starting:
             move = legal_starting[0]
@@ -41,7 +41,7 @@ def placing_phase(self, turns):
         else:
             """ Make a random legal move (Just for now) """
             move = random_place()
-            while not player.check_legal(self, move, turns):
+            while not pl.check_legal(self, move, turns):
                 move = random_place()
     else:
         """ Maybe be possible to kill the opponent pieces so we want to make a list
@@ -57,7 +57,7 @@ def placing_phase(self, turns):
             """ Also making a random move for now. I think controlling the centre
                 Will give an advantage though """
             move = random_place()
-            while not player.check_legal(self, move, turns):
+            while not pl.check_legal(self, move, turns):
                 move = random_place()
     return move
 
@@ -90,7 +90,7 @@ def check_if_take(self, turns):
                     new_placement = (piece[ROW], piece[COL] + 1)
 
 
-                if player.check_legal(self, new_placement, turns):
+                if pl.check_legal(self, new_placement, turns):
                     potential_move.append(new_placement)
 
     return potential_move
