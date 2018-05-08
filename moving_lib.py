@@ -96,11 +96,39 @@ def evaluation_function(state, move):
 
 def evaluation_function(board_state):
     """
-    (Currently Arbitrary)
-    Returns a numerical score based on how good the board is
+    See how many friendly and enemy pieces are in a 3*3 square
     """
 
-    return len(board_state.piece_locations) - len(board_state.opponent_locations)
+    move = board_state.new_pos
+    ene_count = 0
+    ally_count = 0
+
+    if board_state.colour == "black":
+        colour = "@"
+        ene = "O"
+    else:
+        colour = "O"
+        ene = "@"
+
+    """ Need to be some kind of turn consideration here? """
+
+    for i in range(3):
+        for j in range(3):
+
+            try:
+                piece = board_state.board[move[0] + i][move[1] + j]
+            except (IndexError):
+                piece = "-"
+
+            if piece == colour:
+                ally_count += 1
+            else if piece == ene:
+                ene_count +=1
+
+    net_move = ally_count - ene_count
+
+    return net_move
+    #return len(board_state.piece_locations) - len(board_state.opponent_locations)
 
 
 """ ************************************************************************ """
@@ -214,11 +242,13 @@ def make_move(board_state, move):
     else:
         board[move[MOVETO][ROW]][move[MOVETO][COL]] = "O"
 
-    new_board_state.opponent_locations = board_state.opponent_locations[:]
-    new_board_state.piece_locations = board_state.piece_locations[:]
+    #new_board_state.opponent_locations = board_state.opponent_locations[:]
+    #new_board_state.piece_locations = board_state.piece_locations[:]
 
-    new_board_state.piece_locations.remove(move[MOVEFROM])
-    new_board_state.piece_locations.append(move[MOVETO])
+    #new_board_state.piece_locations.remove(move[MOVEFROM])
+    #new_board_state.piece_locations.append(move[MOVETO])
+
+    new_board_state.new_pos = (move[MOVETO][ROW], move[MOVETO][COL])
 
     return new_board_state
 
