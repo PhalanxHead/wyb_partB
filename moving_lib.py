@@ -27,10 +27,10 @@ class Board_State:
   def __init__(self, board, colour, old_pos, new_pos):
 
     self.board = cpy(board)
-    self.score = None
+    # self.score = None
     self.colour = colour
-    self.opponent_locations = None
     self.piece_locations = None
+    self.opponent_locations = None
     self.old_pos = old_pos
     self.new_pos = new_pos
     self.moving = True
@@ -68,30 +68,7 @@ def get_available_moves(board_state, turns):
 
     return all_moves
 
-""" ************************************************************************ """
 
-def evaluation_function(state, move):
-    """
-    # DEPRECATED
-    Our Evaluation function that determines a score for a specific game state,
-    this score is then used within the minimax algorithm to find the optimal play
-    """
-    score = 0
-    dead = False
-
-    if pl.check_self_die(state, move):
-        score = 5
-        dead = True
-
-    kills = pl.check_move_kill(state, move, state.colour)
-
-    if kills:
-        score = 0
-
-    if not kills and not dead:
-        score  = 4
-
-    return score
 """ ************************************************************************ """
 
 def evaluation_function(board_state):
@@ -122,7 +99,7 @@ def evaluation_function(board_state):
 
             if piece == colour:
                 ally_count += 1
-            else if piece == ene:
+            elif piece == ene:
                 ene_count +=1
 
     net_move = ally_count - ene_count
@@ -228,7 +205,11 @@ def make_move(board_state, move):
     """
     Creates a new board state after the move has been made.
     Returns:
-
+        Board_State entity
+    ======================
+    Input Variables:
+        board_state:    A Board_State object
+        move:           A move ((fromRow, fromCol), (toRow, toCol))
     """
     new_board_state = Board_State(
         cpy(board_state.board), board_state.colour, move[MOVEFROM], move[MOVETO])
@@ -242,11 +223,11 @@ def make_move(board_state, move):
     else:
         board[move[MOVETO][ROW]][move[MOVETO][COL]] = "O"
 
-    #new_board_state.opponent_locations = board_state.opponent_locations[:]
-    #new_board_state.piece_locations = board_state.piece_locations[:]
+    new_board_state.piece_locations = board_state.piece_locations[:]
+    new_board_state.opponent_locations = board_state.opponent_locations[:]
 
-    #new_board_state.piece_locations.remove(move[MOVEFROM])
-    #new_board_state.piece_locations.append(move[MOVETO])
+    new_board_state.piece_locations.remove(move[MOVEFROM])
+    new_board_state.piece_locations.append(move[MOVETO])
 
     new_board_state.new_pos = (move[MOVETO][ROW], move[MOVETO][COL])
 
@@ -374,7 +355,15 @@ def check_game_over(player):
         player:     The player class
     """
 
-    if (len(player.opponent_locations) < 2) or (len(player.piece_locations) < 2):
+    num_opp_pieces = 0
+    symb = "O" if (player.colour == "white") else "@"
+
+    for row in player.board:
+        for space in row:
+            if space == symb:
+                num_opp_pieces += 1
+
+    if (num_opp_pieces < 2) or (len(player.piece_locations) < 2):
         return True
 
     return False
