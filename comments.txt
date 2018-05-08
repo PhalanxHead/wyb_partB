@@ -33,3 +33,8 @@ used minimax and alpha-beta pruning to reduce the memory and time complexity for
 For this purpose we determined an evaluation function to score our Board_State, this scoring was
 dependent on if a move could kill off any opponent pieces, if the piece would be killed itself and also
 how safe a move was, if it was closer to opponent or ally pieces.
+
+Supplementary files:
+In the Irrational folder is all the necessary files needed for a completely irrational player to play the game.
+The irrational player makes only random legal moves, even if they're suicidal.
+It was mainly a test-dummy to work out how the referee interfaces with the players and how to best update the player's internal memories.
