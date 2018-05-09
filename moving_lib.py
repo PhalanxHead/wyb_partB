@@ -264,6 +264,13 @@ def evaluation_function(board_state):
     if pl.check_self_die(board_state, move):
         net_move = -inf
     """
+    """ If we kill someone we want a big reward to incentivise picking this, this
+    must be evaluated after check_self_die as if we kill a piece that could take
+    us we technically don't die to due precedence """
+    """
+    if pl.check_move_kill(board_state, move, board_state.colour):
+        net_move = net_pos + net_pieces + 100
+    """
 
     return net_move
     #return len(board_state.piece_locations) - len(board_state.opponent_locations)
