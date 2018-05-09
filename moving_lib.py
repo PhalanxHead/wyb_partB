@@ -20,6 +20,15 @@ MOVETO = 1
 MAX_PIECES = 5
 MAX_DEPTH = 4
 
+""" Relative Weights of positions to be used in the evaluation function """
+S_TIER = [3,4]
+A_TIER = [2,5]
+PLEB_TIER = [0,1,6,7]
+
+BEST_SPACE = 5
+MID_SPACE = 2
+WORST_SPACE = 0
+
 class Board_State:
   """
   Class that is going to help build our tree for minimax and alpha-beta pruning,
@@ -190,9 +199,23 @@ def calc_man_dist(piece, pos):
 
 def evaluation_function(board_state):
     """
-    See how many friendly and enemy pieces are in a 3*3 square
+    Our evaluation function to determine the best moves for our alpha-beta
+    pruning implementation,
+    Our logic is that we want to be close to the middle of the board so we
+    can have ease when the board shrinks so we give higher weights to these
+    positions.
+    We also want to have ally pieces around us so we aren't easily surrounded
+    or we have potential to surround enemy pieces
+    Returns:
+        relative value of a move based on logic in this function
+    ============================
+    Input Variables:
+        board_state:    Our class holding information about pieces on the board
+                        and the potential move
     """
 
+
+    """ First look at positions of pieces in 3*3 square"""
     move = board_state.new_pos
     ene_count = 0
     ally_count = 0
@@ -204,14 +227,12 @@ def evaluation_function(board_state):
         colour = "O"
         ene = "@"
 
-    """ Need to be some kind of turn consideration here? """
-
     for i in range(3):
         for j in range(3):
 
             try:
-                piece = board_state.board[move[0] + i][move[1] + j]
-            except (IndexError):
+                piece = board_state.board[move[ROW] + i][move[COL] + j]
+            except (IndexError, ValueError):
                 piece = "-"
 
             if piece == colour:
@@ -219,7 +240,24 @@ def evaluation_function(board_state):
             elif piece == ene:
                 ene_count +=1
 
-    net_move = ally_count - ene_count
+    net_pieces = ally_count - ene_count
+
+    """ Weight the value of the position by relative weights given in global variables """
+    net_pos = 0
+    pos = [move[ROW], move[COL]]
+
+    for ele in pos:
+
+        if ele in S_TIER:
+            net_pos += BEST_SPACE
+        elif ele in A_TIER:
+            net_pos += MID_SPACE
+        elif ele in PLEB_TIER:
+            net_pos += WORST_SPACE
+
+    """ Sum these dudes"""
+
+    net_move = net_pos + net_pieces
 
     return net_move
     #return len(board_state.piece_locations) - len(board_state.opponent_locations)
