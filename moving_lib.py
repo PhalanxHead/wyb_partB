@@ -17,6 +17,7 @@ COL = 1
 MOVEFROM = 0
 MOVETO = 1
 
+MAX_PIECES = 5
 MAX_DEPTH = 4
 
 class Board_State:
@@ -67,6 +68,116 @@ def get_available_moves(board_state, turns):
                 all_moves.append((old_pos, new_pos))
 
     return all_moves
+
+""" ************************************************************************ """
+
+def get_best_moves(board_state, turns):
+    """
+    Function that gives the moves from the best N pieces on the board.
+    N is defined in the moving_lib.py preamble
+    Returns:
+        best moves: [((fromRow, fromCol), (toRow, toCol)), ...]
+    ===================================
+    Input Variables:
+        board_state:    The Board_State object
+        turns:          The number of elapsed turns
+    """
+    buffers = [(1,0),(-1,0),(0,1),(0,-1)]
+    best_moves = []
+    best_pieces = []
+    best_piece_max_dist = inf
+
+    """ Work out the best N pieces to move """
+    for old_pos in board_state.piece_locations:
+        man_dist = get_min_dist(old_pos, board_state.opponent_locations)
+
+        if (len(best_pieces) < MAX_PIECES):
+            best_pieces.append((old_pos, man_dist))
+            best_piece_max_dist = max_move(best_pieces)
+
+        elif man_dist < best_piece_max_dist:
+            for piece in best_pieces:
+                if best_piece_max_dist == piece[1]:
+                    best_pieces.remove(piece)
+            best_pieces.append((old_pos, man_dist))
+            best_piece_max_dist = max_move(best_pieces)
+
+
+    for piece in best_pieces:
+
+        for move in buffers:
+
+            new_pos = (piece[0][ROW] + move[ROW], piece[0][COL] + move[COL])
+
+            if pl.check_legal(board_state, new_pos, turns):
+                best_moves.append((piece[0], new_pos))
+
+    return best_moves
+
+""" ************************************************************************ """
+
+def max_move(piece_list):
+    """
+    Determines the maximum value of the pieces which are in form:
+        ((row, col), value).
+    Returns:
+        max_value of the list's values
+    ==================================
+    Input Variables:
+        piece_list: [((row, col), value), ...]
+    """
+
+    max_value = -inf
+
+    for piece in piece_list:
+        if piece[1] > max_value:
+            max_value = piece[1]
+
+    return max_value
+
+""" ************************************************************************ """
+
+def get_min_dist(position, opponent_locations):
+    """
+    Gets the minimum manhattan distance between the position
+    and the opponent_locations.
+    Returns:
+        minimum manhattan distance
+    ==========================
+    Input Variables:
+        position:   (row, col) position to check from
+        opponent_locations: [(row, col), ...] positions of opponent pieces
+    """
+
+    min_dist = inf
+
+    for loc in opponent_locations:
+        local_min_dist = calc_man_dist(position, loc)
+        if local_min_dist < min_dist:
+            min_dist = local_min_dist
+
+            return min_dist
+
+""" ************************************************************************* """
+
+def calc_man_dist(piece, pos):
+    """
+    Calcuates the manhattan distance between 2 positions
+    Returns:
+        int(Manhattan Distance, (|x1 - x2| + |y1 - y2|))
+    ============================
+    Input Variabes:
+        pos1:         First (row, col) tuple
+        pos2:         Second (row, col) tuple
+    """
+    piece_i = piece[ROW]
+    piece_j = piece[COL]
+    pos_i = pos[ROW]
+    pos_j = pos[COL]
+
+    man_dist = (abs(piece_i - pos_i) + abs(piece_j - pos_j))
+
+    return man_dist
 
 
 """ ************************************************************************ """
@@ -126,7 +237,7 @@ def alphabetacaller(player, turn):
     best_move = ((None, None),(None, None))
     best_val = -inf
 
-    legal_moves = get_available_moves(player, turn)
+    legal_moves = get_best_moves(player, turn)
 
     for move in legal_moves:
         """ Max recursive call """
@@ -166,7 +277,7 @@ def alphabeta(board_state, depth, alpha, beta, maximPlayer, turn):
         maximPlayer: True if the current player is looking for the maximum
     """
 
-    legal_moves = get_available_moves(board_state, turn)
+    legal_moves = get_best_moves(board_state, turn)
 
     if (depth == 0) or check_game_over(board_state):
         return evaluation_function(board_state)
