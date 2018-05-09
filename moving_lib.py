@@ -259,18 +259,23 @@ def evaluation_function(board_state):
 
     net_move = net_pos + net_pieces
 
+
+    """ Losing boards are bad """
+    if len(board_state.piece_locations) < 2:
+        net_move -= 100
+
     """ If we die moving into this space, probably not worth the move """
-    """
+
     if pl.check_self_die(board_state, move):
-        net_move = -inf
-    """
+        net_move -= 30
+
     """ If we kill someone we want a big reward to incentivise picking this, this
     must be evaluated after check_self_die as if we kill a piece that could take
     us we technically don't die to due precedence """
-    """
+
     if pl.check_move_kill(board_state, move, board_state.colour):
-        net_move = net_pos + net_pieces + 100
-    """
+        net_move = net_pos + net_pieces + 50
+
 
     return net_move
     #return len(board_state.piece_locations) - len(board_state.opponent_locations)

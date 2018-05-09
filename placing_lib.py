@@ -15,8 +15,8 @@ ROW = 0
 COL = 1
 
 TURN_BUFFER = 5
-BLACK_STARTING_MOVES = [(4,4), (3,3), (3,4),(4,3)]
-WHITE_STARTING_MOVES = [(4,4), (3,3), (3,4),(4,3)]
+BLACK_STARTING_MOVES = [(4,4), (3,3), (3,4), (4,3), (2,2), (2,3), (2,4), (3,2), (4,2)]
+WHITE_STARTING_MOVES = [(4,4), (3,3), (3,4), (4,3), (2,2), (2,3), (2,4), (3,2), (4,2)]
 
 
 """ ************************************************************************ """
@@ -26,9 +26,9 @@ def placing_phase(self, turns):
     Function that determines what the agent should play in the placing phase of the game.
     """
 
-    if turns < TURN_BUFFER:
-        """ Choose some initial best moves, here we need to develop a profile of good moves """
+    potential_killers = check_if_take(self, turns)
 
+    if len(potential_killers) < 2:
         if self.colour == "black":
             legal_starting = [starting for starting in BLACK_STARTING_MOVES if pl.check_legal(self, starting, turns)]
 
@@ -38,28 +38,31 @@ def placing_phase(self, turns):
         if legal_starting:
             move = legal_starting[0]
 
-        else:
-            """ Make a random legal move (Just for now) """
-            move = random_place()
-            while not pl.check_legal(self, move, turns):
-                move = random_place()
     else:
-        """ Maybe be possible to kill the opponent pieces so we want to make a list
-            of all these pieces, at the moment if there are multiple pieces, we will take the first """
+        move = potential_killers[0]
 
-        potential_killers = check_if_take(self, turns)
 
-        if potential_killers:
-
-            move = potential_killers[0]
-
-        else:
-            """ Also making a random move for now. I think controlling the centre
-                Will give an advantage though """
-            move = random_place()
-            while not pl.check_legal(self, move, turns):
-                move = random_place()
     return move
+
+""" ************************************************************************ """
+
+def get_best_placement(player):
+    """
+    Gets the best placement based on eval function (1-ply)
+    """
+
+    #stub
+
+""" ************************************************************************ """
+
+def place_eval(player):
+    """
+    Rates a board.
+
+    net pieces? prioritise centre?
+    """
+
+    #stub
 
 """ ************************************************************************ """
 
@@ -90,7 +93,8 @@ def check_if_take(self, turns):
                     new_placement = (piece[ROW], piece[COL] + 1)
 
 
-                if pl.check_legal(self, new_placement, turns):
+                if pl.check_legal(self, new_placement, turns) and \
+                                    not pl.check_self_die(self, move):
                     potential_move.append(new_placement)
 
     return potential_move
