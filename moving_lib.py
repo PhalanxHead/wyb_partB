@@ -67,6 +67,12 @@ def get_available_moves(board_state, turns):
             if pl.check_legal(board_state, new_pos, turns):
                 all_moves.append((old_pos, new_pos))
 
+            else:
+                new_pos_j = (old_[ROW] + move[ROW]*2, old_pos[COL] + move[COL]*2)
+
+                if pl.check_legal(board_state, new_pos_j, turns):
+                    all_move.append((old_pos, new_pos_j))
+
     return all_moves
 
 """ ************************************************************************ """
