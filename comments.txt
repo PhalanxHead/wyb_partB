@@ -34,6 +34,24 @@ For this purpose we determined an evaluation function to score our Board_State, 
 dependent on if a move could kill off any opponent pieces, if the piece would be killed itself and also
 how safe a move was, if it was closer to opponent or ally pieces.
 
+Evaluation function:
+We designed the evaluation function to try to group up the ally players so that
+they would be able to move through the territory of the board more safely,
+this was done by weighting moves where pieces move to allied territory higher
+than going into many enemy pieces as it would risk that piece dying to the opponent.
+
+We also designed the evaluation function to stick towards the middle so then it would
+cut enemy players off from the middle meaning when the board was to shrink, the maximum
+number of allied players would be safe while enemy players would be killed off as they
+could not move into safe areas (PUBG anyone?).
+
+We also didn't want any reckless moves made by our agent so if the move was to kill
+the piece we would not want this move to be taken, hence the smallest value possible
+would be assigned to it!
+
+Finally we needed an incentive to take pieces so any move that would result in
+enemy players getting killed would be a massive boost in the evaluation function.
+
 Supplementary files:
 In the Irrational folder is all the necessary files needed for a completely irrational player to play the game.
 The irrational player makes only random legal moves, even if they're suicidal.
