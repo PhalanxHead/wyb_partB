@@ -259,6 +259,12 @@ def evaluation_function(board_state):
 
     net_move = net_pos + net_pieces
 
+    """ If we die moving into this space, probably not worth the move """
+    """
+    if pl.check_self_die(board_state, move):
+        net_move = -inf
+    """
+
     return net_move
     #return len(board_state.piece_locations) - len(board_state.opponent_locations)
 
