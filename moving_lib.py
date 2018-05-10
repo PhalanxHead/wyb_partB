@@ -275,7 +275,6 @@ def evaluation_function(board_state):
     if pl.check_move_kill(board_state, move, board_state.colour):
         net_move = net_pos + net_pieces + 50
 
-
     return net_move
 
 

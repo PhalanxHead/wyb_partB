@@ -68,4 +68,4 @@ This is because we wanted to exploit the board shrinking features that happen at
 So we designed our solution so we would try be passive in a sense but to keep pieces centered so then when the
 board shrunk, it would kill off the opponent's pieces while our pieces were safe and it tight formations making it
 harder for the other player to kill our pieces. We could also keep this strategy further resulting in the killing
-of the other player's pieces
+of the other player's pieces.
