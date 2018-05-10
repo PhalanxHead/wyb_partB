@@ -17,8 +17,8 @@ COL = 1
 MOVEFROM = 0
 MOVETO = 1
 
-MAX_PIECES = 5
-MAX_DEPTH = 4
+MAX_PIECES = 7
+MAX_DEPTH = 3
 
 """ Relative Weights of positions to be used in the evaluation function """
 S_TIER = [3,4]
