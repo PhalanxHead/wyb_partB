@@ -267,7 +267,7 @@ def evaluation_function(board_state):
     """ If we die moving into this space, probably not worth the move """
 
     if pl.check_self_die(board_state, move):
-        net_move -= 30
+        net_move = 0
 
     """ If we kill someone we want a big reward to incentivise picking this, this
     must be evaluated after check_self_die as if we kill a piece that could take
@@ -278,7 +278,6 @@ def evaluation_function(board_state):
 
 
     return net_move
-    #return len(board_state.piece_locations) - len(board_state.opponent_locations)
 
 
 """ ************************************************************************ """
