@@ -56,3 +56,16 @@ Supplementary files:
 In the Irrational folder is all the necessary files needed for a completely irrational player to play the game.
 The irrational player makes only random legal moves, even if they're suicidal.
 It was mainly a test-dummy to work out how the referee interfaces with the players and how to best update the player's internal memories.
+
+Creativity of Solution:
+From the lectures, we took our solution for an alpha-beta pruning minimax solution and pushed it further.
+We produced a recursive solution to our original search problem as this allowed us to vary the depth of minimax.
+In lectures we had only used 2-ply minimax, and we wanted to push it further than that so we can explore better
+states of the game. Hence, we allowed minimax to vary in depth!
+
+The actual solution itself and the strategies we placed into our evaluation function we also deemed to be very creative.
+This is because we wanted to exploit the board shrinking features that happen at the different turns in the game.
+So we designed our solution so we would try be passive in a sense but to keep pieces centered so then when the
+board shrunk, it would kill off the opponent's pieces while our pieces were safe and it tight formations making it
+harder for the other player to kill our pieces. We could also keep this strategy further resulting in the killing
+of the other player's pieces
