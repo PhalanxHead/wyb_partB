@@ -4,9 +4,8 @@
 * Amy Rieck and Luke Hedt
 * lhedt@student.unimelb.edu.au
 *
-* Date: 2018/04/19
+* Date: 2018/04/19 - 2018/05/10
 *
-* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
 import player as pl
 import random

@@ -4,21 +4,23 @@
 * Amy Rieck and Luke Hedt
 * lhedt@student.unimelb.edu.au
 *
-* Date: 2018/04/19
+* Date: 2018/04/19 - 2018/05/10
 *
-* Comments: - Need an update for board when piece dies
 *****************************************************************************"""
+
+""" ****** IMPORTS ********* """
 import player as pl
 import placing_lib
 from numpy import inf
 
+""" ******* Definitions ********* """
 ROW = 0
 COL = 1
 MOVEFROM = 0
 MOVETO = 1
 
-MAX_PIECES = 5
-MAX_DEPTH = 4
+MAX_PIECES = 7
+MAX_DEPTH = 3
 
 """ Relative Weights of positions to be used in the evaluation function """
 S_TIER = [3,4]
@@ -52,7 +54,13 @@ class Board_State:
 - we want to first use minimax + alpha-beta pruning
 - """
 def moving_phase(self, turns):
-
+    """
+    Returns a valid move: ((fromRow, fromCol), (toRow, toCol))
+    ====================
+    Input Variables:
+        self:   The player object
+        turns:  The number of elapsed turns
+    """
     move_set = alphabetacaller(self, turns)
 
     return move_set
@@ -63,6 +71,10 @@ def get_available_moves(board_state, turns):
     """
     Function that produces all available moves for the player. The structure of
     the output is a list of nested tuples such that we have (old, new) positions.
+    =======================
+    Input Variables:
+        board_state: A Board_State object
+        turns:       The number of elapsed turns
     """
     buffers = [(1,0),(-1,0),(0,1),(0,-1)]
     all_moves = []
@@ -177,6 +189,7 @@ def get_min_dist(position, opponent_locations):
 
 def calc_man_dist(piece, pos):
     """
+    * Lifted from Part A
     Calcuates the manhattan distance between 2 positions
     Returns:
         int(Manhattan Distance, (|x1 - x2| + |y1 - y2|))
