@@ -63,6 +63,11 @@ We produced a recursive solution to our original search problem as this allowed 
 In lectures we had only used 2-ply minimax, and we wanted to push it further than that so we can explore better
 states of the game. Hence, we allowed minimax to vary in depth!
 
+We decided on the final depth size because if we increased the depth any further it would result in the
+looping of same moves by our player because it would not play anything risky due to how alpha-beta pruning works.
+So our decision was it was better to have a moderate depth but then have a larger branch factor when it came
+into choosing which pieces to move.
+
 The actual solution itself and the strategies we placed into our evaluation function we also deemed to be very creative.
 This is because we wanted to exploit the board shrinking features that happen at the different turns in the game.
 So we designed our solution so we would try be passive in a sense but to keep pieces centered so then when the
