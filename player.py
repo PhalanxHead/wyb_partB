@@ -215,7 +215,6 @@ def check_legal(player, toPos, turnNum):
             return False
 
     """ Check the piece isn't moving into an illegal place """
-    # TODO: Check Jump as well
     if (board[toPos[ROW]][toPos[COL]] != "-"):
         return False
 
