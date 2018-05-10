@@ -55,13 +55,48 @@ def get_best_placement(player):
 
 """ ************************************************************************ """
 
-def place_eval(player):
+def place_eval(player, move):
     """
     Rates a board.
-
     net pieces? prioritise centre?
     """
+    place_score = 0
 
+    """ At the start we will want to build large gatherings of pieces to
+    maximise the chance of our pieces surviving and also taking enemy pieces""""
+
+    ene_count = 0
+    ally_count = 0
+
+    if player.colour == "black":
+        colour = "@"
+        ene = "O"
+    else:
+        colour: "O"
+        ene = "@"
+
+    for i in range(3):
+        for j in range(3):
+
+            try:
+                piece = player.board[move[ROW]+i][move[COL]+j]
+            except (IndexError, ValueError):
+                piece = "-"
+
+            if piece == colour:
+                ally_count += 1
+            elif piece == ene:
+                ene_count += 1
+
+    place_score = ally_count - ene_count
+            
+    if pl.check_self_die(player.board, move):
+        place_score = 0
+
+    if pl.check_move_kill(player.board, move, player.colour):
+        place_score += 50
+
+    return place_score
     #stub
 
 """ ************************************************************************ """
