@@ -25,6 +25,12 @@ WHITE_STARTING_MOVES = [(4,4), (3,3), (3,4), (4,3), (2,2), (2,3), (2,4), (3,2), 
 def placing_phase(self, turns):
     """
     Function that determines what the agent should play in the placing phase of the game.
+    Returns:
+        move: (row, col)
+    ===========================
+    Input Variables:
+        self:   the player class containing information about the board, positions and colour
+        turns:  Number of turns that have gone by
     """
 
     move = None
@@ -81,8 +87,16 @@ def get_best_placement(player, legal_places):
 
 def place_eval(player, move):
     """
-    Rates a board.
-    net pieces? prioritise centre?
+    Our evaluation function to determine the best moves for our placing phase.
+    Our logic is we want to have ally pieces around us so we aren't easily surrounded
+    or we have potential to surround enemy pieces
+    Returns:
+        relative value of a move based on logic in this function
+    ============================
+    Input Variables:
+        player:    Our class holding information about pieces on the board
+                        and the potential move
+        move:      The next move to be considered
     """
     place_score = 0
 
@@ -129,7 +143,14 @@ def check_if_take(self, turns):
     """
     Function to check if there are any opponent's pieces that we could
     possible take out using the placing phase. We look for pieces that have an
-    opponents piece next to them, then add these moves if they are valid."""
+    opponents piece next to them, then add these moves if they are valid.
+    Returns:
+        potential_move: (row, col)
+    ===========================
+    Input Variables:
+        self:   player class, containing information about piece locations and board
+        turns:  number of turns that the game has gone through
+    """
     potential_move = []
 
     buffers = [(1,0), (-1,0), (0,1), (0,-1)]
@@ -161,6 +182,13 @@ def check_if_take(self, turns):
 """**************************************************************************"""
 
 def random_place():
+    """ Gives a random position on the board (may not be valid)
+    Returns:
+        (row,col)
+    ===========================
+    Input Variables:
+        lol none
+     """
     col = random.randint(0,7)
     row = random.randint(0,7)
 
