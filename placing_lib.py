@@ -10,6 +10,7 @@
 *****************************************************************************"""
 import player as pl
 import random
+from numpy import inf
 
 ROW = 0
 COL = 1
@@ -46,12 +47,30 @@ def placing_phase(self, turns):
 
 """ ************************************************************************ """
 
-def get_best_placement(player):
+def get_best_placement(player, legal_places):
     """
     Gets the best placement based on eval function (1-ply)
+    Returns:
+        best_place: (row, col)
+    ===========================
+    Input Variables:
+        player:     The player object
+        legal_places:   The list of legal places to move to [(row, col), ...]
     """
 
-    #stub
+    best_place = None
+    best_val = -inf
+
+    """ Loop through places and get the best place """
+    for place in legal_places:
+        place_val = place_eval(player)
+
+        if place_val > best_val:
+            best_place = place
+            best_val = place_val
+
+
+    return best_place
 
 """ ************************************************************************ """
 
