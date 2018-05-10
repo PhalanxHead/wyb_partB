@@ -77,7 +77,7 @@ def get_available_moves(board_state, turns):
                 all_moves.append((old_pos, new_pos))
 
             else:
-                new_pos_j = (old_[ROW] + move[ROW]*2, old_pos[COL] + move[COL]*2)
+                new_pos_j = (old_pos[ROW] + move[ROW]*2, old_pos[COL] + move[COL]*2)
 
                 if pl.check_legal(board_state, new_pos_j, turns):
                     all_move.append((old_pos, new_pos_j))
@@ -238,7 +238,7 @@ def evaluation_function(board_state):
             if piece == colour:
                 ally_count += 1
             elif piece == ene:
-                ene_count +=1
+                ene_count += 1
 
     net_pieces = ally_count - ene_count
 
@@ -258,7 +258,6 @@ def evaluation_function(board_state):
     """ Sum these dudes"""
 
     net_move = net_pos + net_pieces
-
 
     """ Losing boards are bad """
     if len(board_state.piece_locations) < 2:
