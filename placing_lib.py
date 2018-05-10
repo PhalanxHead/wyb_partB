@@ -27,6 +27,7 @@ def placing_phase(self, turns):
     Function that determines what the agent should play in the placing phase of the game.
     """
 
+    move = None
     potential_killers = check_if_take(self, turns)
 
     if len(potential_killers) < 2:
@@ -37,10 +38,12 @@ def placing_phase(self, turns):
             legal_starting = [starting for starting in WHITE_STARTING_MOVES if pl.check_legal(self, starting, turns)]
 
         if legal_starting:
-            move = legal_starting[0]
+            move = get_best_placement(self, legal_starting)
+        else:
+            move = random_place()
 
     else:
-        move = potential_killers[0]
+        move = get_best_placement(self, potential_killers)
 
 
     return move
@@ -63,7 +66,7 @@ def get_best_placement(player, legal_places):
 
     """ Loop through places and get the best place """
     for place in legal_places:
-        place_val = place_eval(player)
+        place_val = place_eval(player, place)
 
         if place_val > best_val:
             best_place = place
@@ -82,7 +85,7 @@ def place_eval(player, move):
     place_score = 0
 
     """ At the start we will want to build large gatherings of pieces to
-    maximise the chance of our pieces surviving and also taking enemy pieces""""
+    maximise the chance of our pieces surviving and also taking enemy pieces"""
 
     ene_count = 0
     ally_count = 0
@@ -91,7 +94,7 @@ def place_eval(player, move):
         colour = "@"
         ene = "O"
     else:
-        colour: "O"
+        colour = "O"
         ene = "@"
 
     for i in range(3):
@@ -108,11 +111,11 @@ def place_eval(player, move):
                 ene_count += 1
 
     place_score = ally_count - ene_count
-            
-    if pl.check_self_die(player.board, move):
+
+    if pl.check_self_die(player, move):
         place_score = 0
 
-    if pl.check_move_kill(player.board, move, player.colour):
+    if pl.check_move_kill(player, move, player.colour):
         place_score += 50
 
     return place_score
@@ -157,6 +160,6 @@ def check_if_take(self, turns):
 
 def random_place():
     col = random.randint(0,7)
-    row = random.randint(0,5)
+    row = random.randint(0,7)
 
     return (row, col)
