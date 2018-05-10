@@ -22,8 +22,13 @@ This class is used heavily within our solution as our solution for the moving ph
 game trees and then pick the optimal state (firstly we're using alpha-beta pruning and minimax).
 
 Placing Phase Strategy:
-Book Learning:
-
+The placing phase strategy is to turtle in the centre if there are no easy
+enemy pieces to take. This should give our player a decent advantage going
+into the moving phase given there should be a numerical advantage as far as
+pieces are concerned. There's also a positional advantage as the player works
+to keep pieces in the center, meaning they won't be killed when the board
+shrinks. This means the okayer can work on making better moves without trying
+to scramble pieces to the centre when the board shrinks.
 
 Moving Phase Strategy:
 Minimax and Alpha Beta Pruning Implementation:
@@ -66,7 +71,8 @@ states of the game. Hence, we allowed minimax to vary in depth!
 We decided on the final depth size because if we increased the depth any further it would result in the
 looping of same moves by our player because it would not play anything risky due to how alpha-beta pruning works.
 So our decision was it was better to have a moderate depth but then have a larger branch factor when it came
-into choosing which pieces to move.
+into choosing which pieces to move. On our machine and on both Dimefox and
+Digitalis, the solution only took about 80-110MB of memory for both players.
 
 The actual solution itself and the strategies we placed into our evaluation function we also deemed to be very creative.
 This is because we wanted to exploit the board shrinking features that happen at the different turns in the game.
