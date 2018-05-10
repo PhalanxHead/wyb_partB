@@ -41,6 +41,8 @@ def placing_phase(self, turns):
             move = get_best_placement(self, legal_starting)
         else:
             move = random_place()
+            while not pl.check_legal(self, move, turns):
+                move = random_place()
 
     else:
         move = get_best_placement(self, potential_killers)
